@@ -1,10 +1,7 @@
 package controller
 
 import gui.AttributeExtractionComponent
-import magentoAPIClient.HttpHelper
-import magentoAPIClient.attributesOfAttributeSet
-import magentoAPIClient.listAttributeSets
-import magentoAPIClient.listAttributes
+import magentoAPIClient.*
 import model.*
 import org.json.JSONArray
 import org.json.JSONObject
@@ -27,7 +24,7 @@ class AttributeExtractionController(private val base: BaseController, private va
                 queryShop()
             }, {
                 view.updateInfoLabels(attributeSets.size, attributes.size, attributeOptions.size)
-            })
+            },{})
         }
 
         view.addSaveAttributeSetsBtnAction { saveAttributeSetsToCSV(view) }
@@ -62,7 +59,7 @@ class AttributeExtractionController(private val base: BaseController, private va
 
     private fun queryAttributeSets() {
 
-        val result = HttpHelper(listAttributeSets(config.baseUrl, config.authentication)).sendRequest()
+        val result = HttpHelper(ProductRequestFactory.listAttributeSets(config.baseUrl, config.authentication)).sendRequest()
         val jsonRoot = result.toJSONObject()
 
 
@@ -87,7 +84,7 @@ class AttributeExtractionController(private val base: BaseController, private va
 
     private fun queryAllAttributes() {
 
-        val result = HttpHelper(listAttributes(config.baseUrl, config.authentication)).sendRequest()
+        val result = HttpHelper(ProductRequestFactory.listAttributes(config.baseUrl, config.authentication)).sendRequest()
         val jsonRoot = result.toJSONObject()
 
         val itemArr = jsonRoot.getJSONArray("items")
@@ -117,7 +114,7 @@ class AttributeExtractionController(private val base: BaseController, private va
         attributeSets.forEach { attrSet ->
 
             val result =
-                HttpHelper(attributesOfAttributeSet(config.baseUrl, config.authentication, attrSet.key)).sendRequest()
+                HttpHelper(ProductRequestFactory.attributesOfAttributeSet(config.baseUrl, config.authentication, attrSet.key)).sendRequest()
 
             result.toJSONArray().forEach { attrJsonObj ->
                 if (attrJsonObj is JSONObject) {

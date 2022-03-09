@@ -57,7 +57,7 @@ class BaseController(val view: BasicWindow) {
         checkForLocalConfigFile()
     }
 
-    fun updateConfigFromGui(config:Configuration) = view.updateConfigFromGui(config)
+    fun updateConfigFromGui(config: Configuration) = view.updateConfigFromGui(config)
 
     fun allControlsEnabled(enabled: Boolean) = view.allControlsEnabled(enabled)
 
@@ -77,9 +77,6 @@ class BaseController(val view: BasicWindow) {
             println("no (startup) config file found at: ${configFile.absolutePath}")
         }
     }
-
-
-
 
 
     //region configuration json methods
@@ -160,7 +157,13 @@ fun readFileDialogHandler(parent: JFrame, encoding: Charset): String {
 //endregion
 
 
-fun queryHandling(base:BaseController, guiRefreshInterval: Long, queryJob: () -> Unit, guiUpdate: () -> Unit) {
+fun queryHandling(
+    base: BaseController,
+    guiRefreshInterval: Long,
+    queryJob: () -> Unit,
+    afterGuiUpdate: () -> Unit,
+    recuringGuiUpdate: () -> Unit
+) {
     base.allControlsEnabled(false)
 
     Thread {
@@ -169,7 +172,7 @@ fun queryHandling(base:BaseController, guiRefreshInterval: Long, queryJob: () ->
             Thread {
                 while (isRefreshingAllowed) {
                     EventQueue.invokeLater {
-                        guiUpdate()
+                        recuringGuiUpdate()
                     }
                     Thread.sleep(guiRefreshInterval)
                 }
@@ -180,7 +183,8 @@ fun queryHandling(base:BaseController, guiRefreshInterval: Long, queryJob: () ->
             e.printStackTrace()
         } finally {
             EventQueue.invokeLater {
-                guiUpdate()
+                recuringGuiUpdate()
+                afterGuiUpdate()
                 base.allControlsEnabled(true)
             }
         }

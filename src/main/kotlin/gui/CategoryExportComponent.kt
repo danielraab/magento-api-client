@@ -59,7 +59,7 @@ class CategoryExportComponent : JPanel(), GuiComponentInterface {
 
 
     fun updateInfoLabels(categoryTreeCnt: Int = -1, categoryListCnt: Int = -1) {
-        if (categoryTreeCnt >= 0) categoryTreeSizeJL.text = categoryListCnt.toString()
+        if (categoryTreeCnt >= 0) categoryTreeSizeJL.text = categoryTreeCnt.toString()
         if (categoryListCnt >= 0) categoryListSizeJL.text = categoryListCnt.toString()
     }
 
