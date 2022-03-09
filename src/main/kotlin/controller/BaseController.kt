@@ -6,6 +6,8 @@ import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
 import org.json.JSONTokener
+import java.awt.Component
+import java.awt.EventQueue
 import java.io.File
 import java.nio.charset.Charset
 import javax.swing.JFileChooser
@@ -15,45 +17,49 @@ import javax.swing.JOptionPane
 const val refreshTimeoutWhileLoading: Long = 2000
 private const val startupConfigFilePath = "./config.json"
 
-class BaseController(private val base: BasicWindow) {
+class BaseController(val view: BasicWindow) {
 
     private var config = Configuration()
 
 
-    private val attrExtractionController = AttributeExtractionController(base)
-    private val categoryExportController = CategoryExportController(base)
+    private val attrExtractionController = AttributeExtractionController(this, view.attributeExtractionPanel)
+    private val categoryExportController = CategoryExportController(this, view.categoryExportPanel)
 
     fun initController() {
         attrExtractionController.initController()
         categoryExportController.initController()
 
-        base.updateControls(config)
+        view.updateControls(config)
 
-        base.addSaveConfigMenuItem {
-            config = base.updateCurrentConfig(config)
-            saveDialogHandler(base, config.toJSONObject().toString(), Charsets.UTF_8)
+        view.addSaveConfigMenuItem {
+            config = view.updateConfigFromGui(config)
+            saveDialogHandler(view, config.toJSONObject().toString(), Charsets.UTF_8)
         }
 
-        base.addLoadConfigMenuItem {
-            val configStr = readFileDialogHandler(base, Charsets.UTF_8)
+        view.addLoadConfigMenuItem {
+            val configStr = readFileDialogHandler(view, Charsets.UTF_8)
             if (configStr.isNotBlank()) {
                 try {
                     config = configStr.toJSONObject().toConfigObject()
-                    base.updateControls(config)
-                    JOptionPane.showMessageDialog(base, "Config successfully loaded.")
+                    view.updateControls(config)
+                    JOptionPane.showMessageDialog(view, "Config successfully loaded.")
                 } catch (e: JSONException) {
                     println("unable to read json file:")
                     println(configStr)
-                    JOptionPane.showMessageDialog(base, "no valid config file.")
+                    JOptionPane.showMessageDialog(view, "no valid config file.")
                 }
             }
         }
 
-        base.isVisible = true
-        base.pack()
+        view.isVisible = true
+        view.pack()
 
         checkForLocalConfigFile()
     }
+
+    fun updateConfigFromGui(config:Configuration) = view.updateConfigFromGui(config)
+
+    fun allControlsEnabled(enabled: Boolean) = view.allControlsEnabled(enabled)
 
     private fun checkForLocalConfigFile() {
         val configFile = File(startupConfigFilePath)
@@ -61,8 +67,8 @@ class BaseController(private val base: BasicWindow) {
             val configStr = configFile.readText(Charsets.UTF_8)
             try {
                 config = configStr.toJSONObject().toConfigObject()
-                base.updateControls(config)
-                JOptionPane.showMessageDialog(base, "Config successfully loaded.")
+                view.updateControls(config)
+                JOptionPane.showMessageDialog(view, "Config successfully loaded.")
             } catch (e: JSONException) {
                 println("unable to read json file:")
                 println(configStr)
@@ -122,7 +128,7 @@ fun String.toJSONArray(): JSONArray {
 
 // region dialog handler
 
-fun saveDialogHandler(parent: JFrame, contentToSave: String, encoding: Charset) {
+fun saveDialogHandler(parent: Component, contentToSave: String, encoding: Charset) {
     val fileChooser = JFileChooser()
 
     if (fileChooser.showSaveDialog(parent) == JFileChooser.APPROVE_OPTION) {
@@ -152,3 +158,31 @@ fun readFileDialogHandler(parent: JFrame, encoding: Charset): String {
 }
 
 //endregion
+
+
+fun queryHandling(base:BaseController, guiRefreshInterval: Long, queryJob: () -> Unit, guiUpdate: () -> Unit) {
+    base.allControlsEnabled(false)
+
+    Thread {
+        try {
+            var isRefreshingAllowed = true
+            Thread {
+                while (isRefreshingAllowed) {
+                    EventQueue.invokeLater {
+                        guiUpdate()
+                    }
+                    Thread.sleep(guiRefreshInterval)
+                }
+            }.start()
+            queryJob()
+            isRefreshingAllowed = false
+        } catch (e: Exception) {
+            e.printStackTrace()
+        } finally {
+            EventQueue.invokeLater {
+                guiUpdate()
+                base.allControlsEnabled(true)
+            }
+        }
+    }.start()
+}

@@ -67,7 +67,7 @@ class AttributeExtractionComponent : JPanel(), GuiComponentInterface {
         encodingJCB.selectedItem = config.encoding
     }
 
-    override fun updateCurrentConfig(config: Configuration): Configuration {
+    override fun updateConfigFromGui(config: Configuration): Configuration {
         val sel = encodingJCB.selectedItem
         config.columnSeparator = columnSeparatorJTF.text
         if (sel is AvailableCharset) config.encoding = sel

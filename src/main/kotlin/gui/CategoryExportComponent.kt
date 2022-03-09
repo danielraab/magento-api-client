@@ -46,7 +46,7 @@ class CategoryExportComponent : JPanel(), GuiComponentInterface {
     override fun updateControls(config: Configuration) {
     }
 
-    override fun updateCurrentConfig(config: Configuration): Configuration {
+    override fun updateConfigFromGui(config: Configuration): Configuration {
         return config
     }
 

@@ -1,6 +1,7 @@
 package controller
 
 import gui.BasicWindow
+import gui.CategoryExportComponent
 import magentoAPIClient.HttpHelper
 import magentoAPIClient.attributesOfAttributeSet
 import magentoAPIClient.listAttributeSets
@@ -13,13 +14,16 @@ import java.time.zone.ZoneRulesProvider
 import javax.swing.JFrame
 import javax.swing.JOptionPane
 
-class CategoryExportController(base:BasicWindow) {
-    private val view = base.categoryExportPanel
+class CategoryExportController(private val base:BaseController, private val view: CategoryExportComponent) {
 
     private var config = Configuration()
 
     fun initController() {
-        view.addBtnActionHandlers({},{},{},{})
+        view.addBtnActionHandlers({
+            base.allControlsEnabled(false)
+            this.config = base.updateConfigFromGui(this.config)
+
+        },{},{},{})
 
         view.updateInfoLabels()
     }

@@ -75,10 +75,10 @@ class BasicWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInter
         categoryExportPanel.updateControls(config)
     }
 
-    override fun updateCurrentConfig(config: Configuration): Configuration {
+    override fun updateConfigFromGui(config: Configuration): Configuration {
         var newConfig = Configuration(baseUrlJTF.text, authJTF.text);
-        newConfig = attributeExtractionPanel.updateCurrentConfig(newConfig)
-        newConfig = categoryExportPanel.updateCurrentConfig(newConfig)
+        newConfig = attributeExtractionPanel.updateConfigFromGui(newConfig)
+        newConfig = categoryExportPanel.updateConfigFromGui(newConfig)
         return newConfig
     }
 
@@ -99,10 +99,6 @@ class BasicWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInter
     }
 
 //endregion
-
-
-
-
 
 }
 

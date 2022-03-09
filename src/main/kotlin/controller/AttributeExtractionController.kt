@@ -1,6 +1,6 @@
 package controller
 
-import gui.BasicWindow
+import gui.AttributeExtractionComponent
 import magentoAPIClient.HttpHelper
 import magentoAPIClient.attributesOfAttributeSet
 import magentoAPIClient.listAttributeSets
@@ -8,13 +8,10 @@ import magentoAPIClient.listAttributes
 import model.*
 import org.json.JSONArray
 import org.json.JSONObject
-import java.awt.EventQueue
-import java.time.zone.ZoneRulesProvider
-import javax.swing.JFrame
+import java.awt.Component
 import javax.swing.JOptionPane
 
-class AttributeExtractionController(private val base:BasicWindow) {
-    private val view = base.attributeExtractionPanel
+class AttributeExtractionController(private val base: BaseController, private val view:AttributeExtractionComponent) {
 
     private var attributeSets = mutableMapOf<Int, AttributeSet>()
     private var attributes = mutableMapOf<Int, Attribute>()
@@ -25,40 +22,18 @@ class AttributeExtractionController(private val base:BasicWindow) {
     fun initController() {
 
         view.addQueryAPIBtnAction {
-            base.allControlsEnabled(false)
-            this.config = base.updateCurrentConfig(this.config)
-
-            Thread {
-                try {
-                    var isRefreshingAllowed = true
-                    val refresherThread = Thread {
-                        while (isRefreshingAllowed) {
-                            EventQueue.invokeLater {
-                                view.updateInfoLabels(attributeSets.size, attributes.size, attributeOptions.size)
-                            }
-                            Thread.sleep(refreshTimeoutWhileLoading)
-                        }
-                    }
-                    refresherThread.start()
-                    queryShop()
-                    isRefreshingAllowed = false
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                } finally {
-                    ZoneRulesProvider.refresh()
-
-                    EventQueue.invokeLater {
-                        view.updateInfoLabels(attributeSets.size, attributes.size, attributeOptions.size)
-                        base.allControlsEnabled(true)
-                    }
-                }
-            }.start()
+            queryHandling(base, refreshTimeoutWhileLoading, {
+                this.config = base.updateConfigFromGui(this.config)
+                queryShop()
+            }, {
+                view.updateInfoLabels(attributeSets.size, attributes.size, attributeOptions.size)
+            })
         }
 
-        view.addSaveAttributeSetsBtnAction { saveAttributeSetsToCSV(base) }
-        view.addSaveAttributesBtnAction { saveAttributesToCSV(base) }
-        view.addSaveAttributesWithOptionsBtnAction { saveAttributesWithOptionsToCSV(base) }
-        view.addAllBtnAction { saveAllToCSV(base) }
+        view.addSaveAttributeSetsBtnAction { saveAttributeSetsToCSV(view) }
+        view.addSaveAttributesBtnAction { saveAttributesToCSV(view) }
+        view.addSaveAttributesWithOptionsBtnAction { saveAttributesWithOptionsToCSV(view) }
+        view.addAllBtnAction { saveAllToCSV(view) }
 
 
     }
@@ -74,39 +49,39 @@ class AttributeExtractionController(private val base:BasicWindow) {
 
     private fun queryShop() {
         try {
-        clearMaps()
-        queryAttributeSets()
-        queryAllAttributes()
-        queryAttributeFromSets()
+            clearMaps()
+            queryAttributeSets()
+            queryAllAttributes()
+            queryAttributeFromSets()
 
-        } catch (e:Exception) {
+        } catch (e: Exception) {
             println("unable to query given url")
-            JOptionPane.showMessageDialog(base, "unable to query given url.")
+            JOptionPane.showMessageDialog(view, "unable to query given url.")
         }
     }
 
     private fun queryAttributeSets() {
 
-            val result = HttpHelper(listAttributeSets(config.baseUrl, config.authentication)).sendRequest()
-            val jsonRoot = result.toJSONObject()
+        val result = HttpHelper(listAttributeSets(config.baseUrl, config.authentication)).sendRequest()
+        val jsonRoot = result.toJSONObject()
 
 
-            val itemsArr = jsonRoot.getJSONArray("items")
+        val itemsArr = jsonRoot.getJSONArray("items")
 
-            itemsArr.forEach {
-                if (it is JSONObject) {
-                    val id = it.get("attribute_set_id").toString().toInt()
-                    if (attributeSets.containsKey(id)) {
-                        println("AttributeSet: $it already exists")
-                    } else {
-                        attributeSets[id] = AttributeSet(id, it.get("attribute_set_name").toString())
-                    }
+        itemsArr.forEach {
+            if (it is JSONObject) {
+                val id = it.get("attribute_set_id").toString().toInt()
+                if (attributeSets.containsKey(id)) {
+                    println("AttributeSet: $it already exists")
+                } else {
+                    attributeSets[id] = AttributeSet(id, it.get("attribute_set_name").toString())
                 }
             }
-            if (itemsArr.length() != jsonRoot.getInt("total_count")) {
-                println("given items are not complete:")
-                println(jsonRoot)
-            }
+        }
+        if (itemsArr.length() != jsonRoot.getInt("total_count")) {
+            println("given items are not complete:")
+            println(jsonRoot)
+        }
     }
 
 
@@ -182,11 +157,16 @@ class AttributeExtractionController(private val base:BasicWindow) {
 
     //region csv generating functions
 
-    private fun saveAttributeSetsToCSV(parent: JFrame) {
+    private fun saveAttributeSetsToCSV(parent: Component) {
         if (attributeSets.isNotEmpty()) {
             saveDialogHandler(
                 parent,
-                createCSVString(withHeader = true, withAttributeSet = true, withAttributes = false, withOptions = false),
+                createCSVString(
+                    withHeader = true,
+                    withAttributeSet = true,
+                    withAttributes = false,
+                    withOptions = false
+                ),
                 config.encoding.charset
             )
         } else {
@@ -194,11 +174,16 @@ class AttributeExtractionController(private val base:BasicWindow) {
         }
     }
 
-    private fun saveAttributesToCSV(parent: JFrame) {
+    private fun saveAttributesToCSV(parent: Component) {
         if (attributeSets.isNotEmpty()) {
             saveDialogHandler(
                 parent,
-                createCSVString(withHeader = true, withAttributeSet = false, withAttributes = true, withOptions = false),
+                createCSVString(
+                    withHeader = true,
+                    withAttributeSet = false,
+                    withAttributes = true,
+                    withOptions = false
+                ),
                 config.encoding.charset
             )
         } else {
@@ -206,7 +191,7 @@ class AttributeExtractionController(private val base:BasicWindow) {
         }
     }
 
-    private fun saveAttributesWithOptionsToCSV(parent: JFrame) {
+    private fun saveAttributesWithOptionsToCSV(parent: Component) {
         if (attributes.isNotEmpty()) {
             saveDialogHandler(
                 parent,
@@ -223,7 +208,7 @@ class AttributeExtractionController(private val base:BasicWindow) {
         withAttributeSet: Boolean,
         withAttributes: Boolean,
         withOptions: Boolean
-    ):String {
+    ): String {
         val csvContent = mutableListOf<String>()
         if (withHeader) {
             val headerList = mutableListOf<String>()
@@ -258,13 +243,13 @@ class AttributeExtractionController(private val base:BasicWindow) {
             csvContent.addAll(csvContentList)
         } else if (withAttributes) {
             csvContent.addAll(attributes.toCSVList(withOptions))
-        } else if(withOptions) {
+        } else if (withOptions) {
             csvContent.addAll(attributeOptions.map { it.toCsvString(config.columnSeparator) })
         }
         return csvContent.joinToString(System.lineSeparator())
     }
 
-    private fun saveAllToCSV(parent: JFrame) {
+    private fun saveAllToCSV(parent: Component) {
         if (attributeSets.isNotEmpty() || attributes.isNotEmpty()) {
 
             saveDialogHandler(
