@@ -19,8 +19,9 @@ class CategoryExportController(base:BasicWindow) {
     private var config = Configuration()
 
     fun initController() {
+        view.addBtnActionHandlers({},{},{},{})
 
-
+        view.updateInfoLabels()
     }
 
 }

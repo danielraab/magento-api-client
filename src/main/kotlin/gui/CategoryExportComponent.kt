@@ -1,17 +1,44 @@
 package gui
 
 import model.Configuration
+import java.awt.Label
 import javax.swing.*
 
 class CategoryExportComponent : JPanel(), GuiComponentInterface {
 
+    private val queryCategoryTreeBtn = JButton("query")
+    private val categoryTreeSizeJL = JLabel("0")
+    private val saveCategoryTreeBtn = JButton("save")
+    private val queryCategoryListBtn = JButton("query")
+    private val categoryListSizeJL = JLabel("0")
+    private val saveCategoryListBtn = JButton("save")
 
     fun createUI() {
         rowLayout()
-        borderPanelWithTitle("attributes info") {
+        borderPanelWithTitle("category tree") {
             rowLayout()
             flowLayoutPanel {
-                add(JLabel("test label"))
+                add(queryCategoryTreeBtn)
+            }
+            flowLayoutPanel {
+                add(Label("categories in tree:"))
+                add(categoryTreeSizeJL)
+            }
+            flowLayoutPanel {
+                add(saveCategoryTreeBtn)
+            }
+        }
+        borderPanelWithTitle("category details") {
+            rowLayout()
+            flowLayoutPanel {
+                add(queryCategoryListBtn)
+            }
+            flowLayoutPanel {
+                add(Label("categories in list:"))
+                add(categoryListSizeJL)
+            }
+            flowLayoutPanel {
+                add(saveCategoryListBtn)
             }
         }
     }
@@ -24,12 +51,28 @@ class CategoryExportComponent : JPanel(), GuiComponentInterface {
     }
 
     override fun allControlsEnabled(enabled: Boolean) {
+        queryCategoryListBtn.isEnabled = enabled
+        queryCategoryTreeBtn.isEnabled = enabled
+        saveCategoryTreeBtn.isEnabled = enabled
+        saveCategoryListBtn.isEnabled = enabled
     }
 
 
-    //region add listener functions
+    fun updateInfoLabels(categoryTreeCnt: Int = -1, categoryListCnt: Int = -1) {
+        if (categoryTreeCnt >= 0) categoryTreeSizeJL.text = categoryListCnt.toString()
+        if (categoryListCnt >= 0) categoryListSizeJL.text = categoryListCnt.toString()
+    }
 
-
-    //endregion
+    fun addBtnActionHandlers(
+        queryTreeAction: () -> Unit,
+        saveTreeAction: () -> Unit,
+        queryDetailsAction: () -> Unit,
+        saveDetailsAction: () -> Unit
+    ) {
+        queryCategoryTreeBtn.addActionListener { queryTreeAction() }
+        saveCategoryTreeBtn.addActionListener { saveTreeAction() }
+        queryCategoryListBtn.addActionListener { queryDetailsAction() }
+        saveCategoryListBtn.addActionListener { saveDetailsAction() }
+    }
 
 }
