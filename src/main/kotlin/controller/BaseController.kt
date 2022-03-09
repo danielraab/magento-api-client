@@ -21,9 +21,12 @@ class BaseController(private val base: BasicWindow) {
 
 
     private val attrExtractionController = AttributeExtractionController(base)
+    private val categoryExportController = CategoryExportController(base)
 
     fun initController() {
         attrExtractionController.initController()
+        categoryExportController.initController()
+
         base.updateControls(config)
 
         base.addSaveConfigMenuItem {

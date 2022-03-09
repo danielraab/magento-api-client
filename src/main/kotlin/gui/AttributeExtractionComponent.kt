@@ -74,7 +74,13 @@ class AttributeExtractionComponent : JPanel(), GuiComponentInterface {
 
         return config
     }
-
+    override fun allControlsEnabled(enabled: Boolean) {
+        queryAPIJB.isEnabled = enabled
+        saveAttributeSetsJB.isEnabled = enabled
+        saveAttributesJB.isEnabled = enabled
+        saveAttributesWithOptionsJB.isEnabled = enabled
+        saveAllJB.isEnabled = enabled
+    }
 
 //region add listener functions
 
@@ -107,11 +113,5 @@ class AttributeExtractionComponent : JPanel(), GuiComponentInterface {
         attributeOptionCntJL.text = attributeOptionCnt.toString()
     }
 
-    override fun allControlsEnabled(enabled: Boolean) {
-        queryAPIJB.isEnabled = enabled
-        saveAttributeSetsJB.isEnabled = enabled
-        saveAttributesJB.isEnabled = enabled
-        saveAttributesWithOptionsJB.isEnabled = enabled
-        saveAllJB.isEnabled = enabled
-    }
+
 }
