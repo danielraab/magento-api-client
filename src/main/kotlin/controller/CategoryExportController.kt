@@ -31,7 +31,8 @@ class CategoryExportController(private val base: BaseController, private val vie
                 view.updateInfoLabels(treeRootCategory?.recursiveSize() ?: 0)
             })
 
-        }, { //TODO
+        }, {
+           saveCategoryTreeToCSV(view)
         }, {
             queryHandling(base, refreshTimeoutWhileLoading, {
                 this.config = base.updateConfigFromGui(this.config)
@@ -171,6 +172,31 @@ class CategoryExportController(private val base: BaseController, private val vie
 
         return lines.joinToString(System.lineSeparator())
     }
+
+
+
+
+
+    private fun saveCategoryTreeToCSV(view: CategoryExportComponent) {
+        if (treeRootCategory != null) {
+            saveDialogHandler(
+                view,
+                createCategoryTreeCSV(),
+                config.encoding.charset
+            )
+        } else {
+            JOptionPane.showMessageDialog(view, "No category tree to save.")
+        }
+    }
+
+    private fun createCategoryTreeCSV(): String {
+        val lines = mutableListOf<String>()
+
+        treeRootCategory?.recursiveCsvTree(config.columnSeparator, lines)
+
+        return lines.joinToString(System.lineSeparator())
+    }
+
 
     //endregion
 }

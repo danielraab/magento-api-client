@@ -39,6 +39,19 @@ fun CategoryBasics.toCsvString(columnSeparator: String): String {
     ).joinToString(columnSeparator)
 }
 
+fun CategoryBasics.toLevelBasedCsvTree(columnSeparator: String): String {
+    val cols = mutableListOf<String>()
+    repeat(this.level-1) {cols.add("")}
+    cols.add(this.id.toString())
+    cols.add(this.name.quote())
+    return cols.joinToString(columnSeparator)
+}
+
+fun CategoryBasics.recursiveCsvTree(columnSeparator: String, treeList: MutableList<String>){
+    treeList.add(this.toLevelBasedCsvTree(columnSeparator))
+    this.children.forEach { it.recursiveCsvTree(columnSeparator, treeList) }
+}
+
 
 fun CategoryDetail.toCsvString(columnSeparator: String): List<String> {
     val preAttrInfo = listOf(
