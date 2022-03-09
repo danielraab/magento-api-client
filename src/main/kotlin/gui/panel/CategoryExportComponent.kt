@@ -1,5 +1,9 @@
-package gui
+package gui.panel
 
+import gui.GuiComponentInterface
+import gui.borderPanelWithTitle
+import gui.flowLayoutPanel
+import gui.rowLayout
 import model.Configuration
 import java.awt.Label
 import javax.swing.*

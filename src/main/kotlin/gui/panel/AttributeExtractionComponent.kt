@@ -1,6 +1,9 @@
-package gui
+package gui.panel
 
-import model.AvailableCharset
+import gui.GuiComponentInterface
+import gui.borderPanelWithTitle
+import gui.flowLayoutPanel
+import gui.rowLayout
 import model.Configuration
 import java.awt.Label
 import javax.swing.*
@@ -11,8 +14,6 @@ class AttributeExtractionComponent : JPanel(), GuiComponentInterface {
     private val attributeSetCntJL = JLabel("0")
     private val attributeCntJL = JLabel("0")
     private val attributeOptionCntJL = JLabel("0")
-    private val columnSeparatorJTF = JTextField()
-    private val encodingJCB = JComboBox(AvailableCharset.values())
     private val saveAttributeSetsJB = JButton("attribute sets")
     private val saveAttributesJB = JButton("attributes")
     private val saveAttributesWithOptionsJB = JButton("attributes with options")
@@ -41,12 +42,6 @@ class AttributeExtractionComponent : JPanel(), GuiComponentInterface {
         borderPanelWithTitle("save to CSV") {
             rowLayout()
             flowLayoutPanel {
-                add(Label("column separator:"))
-                add(columnSeparatorJTF)
-                add(Label("encoding:"))
-                add(encodingJCB)
-            }
-            flowLayoutPanel {
                 add(saveAttributeSetsJB)
             }
             flowLayoutPanel {
@@ -59,19 +54,12 @@ class AttributeExtractionComponent : JPanel(), GuiComponentInterface {
         }
 
 
-        columnSeparatorJTF.columns = 2
     }
 
     override fun updateControls(config: Configuration) {
-        columnSeparatorJTF.text = config.columnSeparator
-        encodingJCB.selectedItem = config.encoding
     }
 
     override fun updateConfigFromGui(config: Configuration): Configuration {
-        val sel = encodingJCB.selectedItem
-        config.columnSeparator = columnSeparatorJTF.text
-        if (sel is AvailableCharset) config.encoding = sel
-
         return config
     }
     override fun allControlsEnabled(enabled: Boolean) {

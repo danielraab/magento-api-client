@@ -1,5 +1,8 @@
 package gui
 
+import gui.panel.AttributeExtractionComponent
+import gui.panel.CategoryExportComponent
+import model.AvailableCharset
 import model.Configuration
 import java.awt.*
 import javax.swing.*
@@ -12,6 +15,8 @@ class BasicWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInter
     val categoryExportPanel = CategoryExportComponent()
     private val baseUrlJTF = JTextField()
     private val authJTF = JTextField()
+    private val columnSeparatorJTF = JTextField()
+    private val encodingJCB = JComboBox(AvailableCharset.values())
     private val loadConfigMenu = JMenuItem("load")
     private val saveConfigMenu = JMenuItem("save")
 
@@ -48,12 +53,21 @@ class BasicWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInter
                             add(authJTF)
                         }
                     }
+                    borderPanelWithTitle("CSV settings:") {
+                        rowLayout()
+                        flowLayoutPanel {
+                            add(Label("column separator:"))
+                            add(columnSeparatorJTF)
+                            add(Label("encoding:"))
+                            add(encodingJCB)
+                        }
+                    }
                     add(tabbedPanel)
                 }
             }
         }
 
-
+        columnSeparatorJTF.columns = 2
 
         defaultCloseOperation = EXIT_ON_CLOSE
         setSize(300, 200)
@@ -71,12 +85,19 @@ class BasicWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInter
     override fun updateControls(config: Configuration) {
         baseUrlJTF.text = config.baseUrl
         authJTF.text = config.authentication
+        columnSeparatorJTF.text = config.columnSeparator
+        encodingJCB.selectedItem = config.encoding
         attributeExtractionPanel.updateControls(config)
         categoryExportPanel.updateControls(config)
     }
 
     override fun updateConfigFromGui(config: Configuration): Configuration {
-        var newConfig = Configuration(baseUrlJTF.text, authJTF.text);
+        var newConfig = Configuration(baseUrlJTF.text, authJTF.text)
+        val sel = encodingJCB.selectedItem
+
+        newConfig.columnSeparator = columnSeparatorJTF.text
+        if (sel is AvailableCharset) newConfig.encoding = sel
+
         newConfig = attributeExtractionPanel.updateConfigFromGui(newConfig)
         newConfig = categoryExportPanel.updateConfigFromGui(newConfig)
         return newConfig

@@ -1,17 +1,11 @@
 package controller
 
-import gui.BasicWindow
-import gui.CategoryExportComponent
+import gui.panel.CategoryExportComponent
 import magentoAPIClient.*
 import model.*
 import org.json.JSONArray
-import org.json.JSONException
 import org.json.JSONObject
 import java.awt.Component
-import java.awt.EventQueue
-import java.net.http.HttpResponse
-import java.time.zone.ZoneRulesProvider
-import javax.swing.JFrame
 import javax.swing.JOptionPane
 
 class CategoryExportController(private val base: BaseController, private val view: CategoryExportComponent) {
@@ -32,6 +26,7 @@ class CategoryExportController(private val base: BaseController, private val vie
             })
 
         }, {
+            this.config = base.updateConfigFromGui(this.config)
            saveCategoryTreeToCSV(view)
         }, {
             queryHandling(base, refreshTimeoutWhileLoading, {
@@ -42,6 +37,7 @@ class CategoryExportController(private val base: BaseController, private val vie
                 view.updateInfoLabels(categoryListCnt = categoryDetailsList.size)
             })
         }, {
+            this.config = base.updateConfigFromGui(this.config)
             saveCategoryDetailListToCSV(view)
         })
 

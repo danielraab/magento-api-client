@@ -1,6 +1,6 @@
 package controller
 
-import gui.AttributeExtractionComponent
+import gui.panel.AttributeExtractionComponent
 import magentoAPIClient.*
 import model.*
 import org.json.JSONArray
@@ -8,7 +8,7 @@ import org.json.JSONObject
 import java.awt.Component
 import javax.swing.JOptionPane
 
-class AttributeExtractionController(private val base: BaseController, private val view:AttributeExtractionComponent) {
+class AttributeExtractionController(private val base: BaseController, private val view: AttributeExtractionComponent) {
 
     private var attributeSets = mutableMapOf<Int, AttributeSet>()
     private var attributes = mutableMapOf<Int, Attribute>()
