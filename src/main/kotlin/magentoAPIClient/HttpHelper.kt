@@ -11,7 +11,7 @@ fun String.utf8(): String = URLEncoder.encode(this, "UTF-8")
 
 class HttpHelper(private val requestInfo: RequestInfo) {
 
-    fun sendRequest(): String {
+    fun sendRequest(): HttpResponse<String> {
         val client = HttpClient.newBuilder().build()
         var requestUrl = requestInfo.baseUrl + requestInfo.serverPath
 
@@ -23,9 +23,6 @@ class HttpHelper(private val requestInfo: RequestInfo) {
         if(requestInfo.method != Method.GET) throw NotImplementedError()
         requestInfo.headers.forEach { (k, v) -> requestBuilder.header(k.key, v) }
 
-        val response = client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString())
-
-        return response.body()
+        return client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString())
     }
-
 }

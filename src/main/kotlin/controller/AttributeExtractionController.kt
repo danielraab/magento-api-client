@@ -32,7 +32,6 @@ class AttributeExtractionController(private val base: BaseController, private va
         view.addSaveAttributesWithOptionsBtnAction { saveAttributesWithOptionsToCSV(view) }
         view.addAllBtnAction { saveAllToCSV(view) }
 
-
     }
 
     private fun clearMaps() {
@@ -60,7 +59,7 @@ class AttributeExtractionController(private val base: BaseController, private va
     private fun queryAttributeSets() {
 
         val result = HttpHelper(ProductRequestFactory.listAttributeSets(config.baseUrl, config.authentication)).sendRequest()
-        val jsonRoot = result.toJSONObject()
+        val jsonRoot = result.body().toJSONObject()
 
 
         val itemsArr = jsonRoot.getJSONArray("items")
@@ -85,7 +84,7 @@ class AttributeExtractionController(private val base: BaseController, private va
     private fun queryAllAttributes() {
 
         val result = HttpHelper(ProductRequestFactory.listAttributes(config.baseUrl, config.authentication)).sendRequest()
-        val jsonRoot = result.toJSONObject()
+        val jsonRoot = result.body().toJSONObject()
 
         val itemArr = jsonRoot.getJSONArray("items")
         itemArr.forEach { attrJsonObj ->
@@ -116,7 +115,7 @@ class AttributeExtractionController(private val base: BaseController, private va
             val result =
                 HttpHelper(ProductRequestFactory.attributesOfAttributeSet(config.baseUrl, config.authentication, attrSet.key)).sendRequest()
 
-            result.toJSONArray().forEach { attrJsonObj ->
+            result.body().toJSONArray().forEach { attrJsonObj ->
                 if (attrJsonObj is JSONObject) {
                     try {
                         val attribute = parseJSONAttributeObject(attrJsonObj)

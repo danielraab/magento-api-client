@@ -17,7 +17,7 @@ data class Attribute(
 data class AttributeSet(val id: Int, val name: String, val attributes:MutableMap<Int, Attribute> = mutableMapOf()) {companion object}
 
 
-fun String.quote() = "\"$this\""
+fun String.quote() = "\"${this.replace("\"", "\"\"")}\""
 
 //region csv extension functions
 

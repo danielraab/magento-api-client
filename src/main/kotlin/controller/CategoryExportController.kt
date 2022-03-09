@@ -5,8 +5,11 @@ import gui.CategoryExportComponent
 import magentoAPIClient.*
 import model.*
 import org.json.JSONArray
+import org.json.JSONException
 import org.json.JSONObject
+import java.awt.Component
 import java.awt.EventQueue
+import java.net.http.HttpResponse
 import java.time.zone.ZoneRulesProvider
 import javax.swing.JFrame
 import javax.swing.JOptionPane
@@ -28,7 +31,8 @@ class CategoryExportController(private val base: BaseController, private val vie
                 view.updateInfoLabels(treeRootCategory?.recursiveSize() ?: 0)
             })
 
-        }, {}, {  //TODO
+        }, { //TODO
+        }, {
             queryHandling(base, refreshTimeoutWhileLoading, {
                 this.config = base.updateConfigFromGui(this.config)
                 categoryDetailsList.clear()
@@ -36,23 +40,34 @@ class CategoryExportController(private val base: BaseController, private val vie
             }, {}, {
                 view.updateInfoLabels(categoryListCnt = categoryDetailsList.size)
             })
-        }, {}) //TODO
+        }, {
+            saveCategoryDetailListToCSV(view)
+        })
 
         view.updateInfoLabels(0, 0)
     }
+
+
+    //region query and parsing list and trees
 
     private fun queryCategoryTree() {
 
         val result =
             HttpHelper(CategoryRequestFactory.categoryTree(config.baseUrl, config.authentication)).sendRequest()
-        val jsonRoot = result.toJSONObject()
+        if(result.statusCode() == 200) {
+            val jsonRoot = result.body().toJSONObject()
 
-        treeRootCategory = try {
-            parseCategoryJsonObject(jsonRoot)
-        } catch (e: Exception) {
-            println("failed to parse category response:")
-            println(jsonRoot)
-            null
+            treeRootCategory = try {
+                parseCategoryJsonObject(jsonRoot)
+            } catch (e: Exception) {
+                println("failed to parse category response:")
+                println(jsonRoot)
+                null
+            }
+        } else {
+            println("Unable to read site response.")
+            println(result.body())
+            JOptionPane.showMessageDialog(view, "Unable to read site response.")
         }
     }
 
@@ -82,21 +97,31 @@ class CategoryExportController(private val base: BaseController, private val vie
         if (this.has(key)) this.getInt(key) else default
 
     private fun JSONObject.getJSONArray(key: String, default: JSONArray) =
-        if(this.has(key)) this.getJSONArray("children_data") else default
+        if (this.has(key)) this.getJSONArray("children_data") else default
 
     private fun queryCategoryDetailsList() {
-        val result =
-            HttpHelper(CategoryRequestFactory.categoryDetailsList(config.baseUrl, config.authentication)).sendRequest()
-        val jsonRoot = result.toJSONObject()
-        val catArr = jsonRoot.getJSONArray("items")
+        val httpResponse = HttpHelper(
+                CategoryRequestFactory.categoryDetailsList(
+                    config.baseUrl,
+                    config.authentication
+                )
+            ).sendRequest()
+        if (httpResponse.statusCode() == 200) {
+            val jsonRoot = httpResponse.body().toJSONObject()
+            val catArr = jsonRoot.getJSONArray("items")
 
-        catArr.forEach {
-            categoryDetailsList.add(parseCategoryDetailJsonObject(it as JSONObject))
-        }
+            catArr.forEach {
+                categoryDetailsList.add(parseCategoryDetailJsonObject(it as JSONObject))
+            }
 
-        if (catArr.length() != jsonRoot.getInt("total_count")) {
-            println("given items are not complete:")
-            println(jsonRoot)
+            if (catArr.length() != jsonRoot.getInt("total_count")) {
+                println("given items are not complete:")
+                println(jsonRoot)
+            }
+        } else {
+            println("Unable to read site response.")
+            println(httpResponse.body())
+            JOptionPane.showMessageDialog(view, "Unable to read site response.")
         }
     }
 
@@ -111,4 +136,41 @@ class CategoryExportController(private val base: BaseController, private val vie
 
         return detail
     }
+
+    //endregion
+
+
+    //region saving
+    private fun saveCategoryDetailListToCSV(parent: Component) {
+        if (categoryDetailsList.isNotEmpty()) {
+            saveDialogHandler(
+                parent,
+                createCategoryDetailsListCSV(
+                    withHeader = true,
+                    withDetails = true
+                ),
+                config.encoding.charset
+            )
+        } else {
+            JOptionPane.showMessageDialog(parent, "No category details list to save.")
+        }
+    }
+
+    private fun createCategoryDetailsListCSV(withHeader: Boolean, withDetails: Boolean):String {
+        val lines = mutableListOf<String>()
+        if (withHeader) {
+            lines.add(
+                if (withDetails) CategoryDetail.csvHeader(config.columnSeparator) else CategoryBasics.csvHeader(
+                    config.columnSeparator
+                )
+            )
+        }
+
+        if(withDetails) lines.addAll(categoryDetailsList.flatMap { it.toCsvString(config.columnSeparator) })
+        else lines.addAll(categoryDetailsList.map { it.basic.toCsvString(config.columnSeparator) })
+
+        return lines.joinToString(System.lineSeparator())
+    }
+
+    //endregion
 }
