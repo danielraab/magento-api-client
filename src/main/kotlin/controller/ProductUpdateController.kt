@@ -1,12 +1,8 @@
 package controller
 
-import gui.panel.CategoryExportComponent
 import gui.panel.ProductUpdateComponent
 import magentoAPIClient.*
 import model.*
-import org.json.JSONArray
-import org.json.JSONObject
-import java.awt.Component
 import javax.swing.JOptionPane
 
 class ProductUpdateController(private val base: BaseController, private val view: ProductUpdateComponent) {
@@ -19,7 +15,7 @@ class ProductUpdateController(private val base: BaseController, private val view
 
             queryHandling(base, refreshTimeoutWhileLoading, {
                 this.config = base.updateConfigFromGui(this.config)
-//                queryCategoryTree()   //TODO
+                queryProducts()   //TODO
             }, {}, {
 //                view.updateInfoLabels(treeRootCategory?.recursiveSize() ?: 0)
             })
@@ -30,29 +26,8 @@ class ProductUpdateController(private val base: BaseController, private val view
     }
 
 
-    //region query and parsing list and trees
+    //region query and parsing list
 
-//    private fun queryCategoryTree() {
-//
-//        val result =
-//            HttpHelper(CategoryRequestFactory.categoryTree(config.baseUrl, config.authentication)).sendRequest()
-//        if(result.statusCode() == 200) {
-//            val jsonRoot = result.body().toJSONObject()
-//
-//            treeRootCategory = try {
-//                parseCategoryJsonObject(jsonRoot)
-//            } catch (e: Exception) {
-//                println("failed to parse category response:")
-//                println(jsonRoot)
-//                null
-//            }
-//        } else {
-//            println("Unable to read site response.")
-//            println(result.body())
-//            JOptionPane.showMessageDialog(view, "Unable to read site response.")
-//        }
-//    }
-//
 //    private fun parseCategoryJsonObject(json: JSONObject): CategoryBasics {
 //        val cat = CategoryBasics(
 //            json.getInt("id"),
@@ -71,12 +46,13 @@ class ProductUpdateController(private val base: BaseController, private val view
 //        }
 //        return cat
 //    }
-//
-//    private fun queryCategoryDetailsList() {
+
+    private fun queryProducts() {
 //        val httpResponse = HttpHelper(
-//                CategoryRequestFactory.categoryDetailsList(
+//                ProductRequestFactory.getProductList(
 //                    config.baseUrl,
-//                    config.authentication
+//                    config.authentication,
+//
 //                )
 //            ).sendRequest()
 //        if (httpResponse.statusCode() == 200) {
@@ -96,8 +72,8 @@ class ProductUpdateController(private val base: BaseController, private val view
 //            println(httpResponse.body())
 //            JOptionPane.showMessageDialog(view, "Unable to read site response.")
 //        }
-//    }
-//
+    }
+
 //    private fun parseCategoryDetailJsonObject(jsonObject: JSONObject): CategoryDetail {
 //        val basic = parseCategoryJsonObject(jsonObject)
 //        val detail = CategoryDetail(basic, jsonObject.getBoolean("include_in_menu", false))

@@ -87,6 +87,7 @@ class BaseController(val view: BasicWindow) {
         val root = JSONObject()
         root.put("baseUrl", this.baseUrl)
         root.put("auth", this.authentication)
+        root.put("storeView", this.storeView)
         root.put("columnSeparator", this.columnSeparator)
         root.put("encoding", this.encoding)
         return root
@@ -96,6 +97,7 @@ class BaseController(val view: BasicWindow) {
         return Configuration(
             this.getString("baseUrl"),
             this.getString("auth"),
+            this.getString("storeView"),
             this.getString("columnSeparator"),
             AvailableCharset.valueOf(this.getString("encoding"))
         )
@@ -164,7 +166,7 @@ fun queryHandling(
     guiRefreshInterval: Long,
     queryJob: () -> Unit,
     afterGuiUpdate: () -> Unit,
-    recuringGuiUpdate: () -> Unit
+    recurringGuiUpdate: () -> Unit
 ) {
     base.allControlsEnabled(false)
 
@@ -174,7 +176,7 @@ fun queryHandling(
             Thread {
                 while (isRefreshingAllowed) {
                     EventQueue.invokeLater {
-                        recuringGuiUpdate()
+                        recurringGuiUpdate()
                     }
                     Thread.sleep(guiRefreshInterval)
                 }
@@ -185,7 +187,7 @@ fun queryHandling(
             e.printStackTrace()
         } finally {
             EventQueue.invokeLater {
-                recuringGuiUpdate()
+                recurringGuiUpdate()
                 afterGuiUpdate()
                 base.allControlsEnabled(true)
             }
@@ -200,5 +202,5 @@ fun JSONObject.getBoolean(key: String, default: Boolean) =
 fun JSONObject.getInt(key: String, default: Int) =
     if (this.has(key)) this.getInt(key) else default
 
-fun JSONObject.getJSONArray(key: String, default: JSONArray) =
+fun JSONObject.getJSONArray(key: String, default: JSONArray): JSONArray =
     if (this.has(key)) this.getJSONArray(key) else default

@@ -113,7 +113,7 @@ class AttributeExtractionController(private val base: BaseController, private va
         attributeSets.forEach { attrSet ->
 
             val result =
-                HttpHelper(ProductRequestFactory.attributesOfAttributeSet(config.baseUrl, config.authentication, attrSet.key)).sendRequest()
+                HttpHelper(ProductRequestFactory.attributesOfAttributeSet(config.baseUrl, config.authentication, attrSetId=attrSet.key)).sendRequest()
 
             result.body().toJSONArray().forEach { attrJsonObj ->
                 if (attrJsonObj is JSONObject) {

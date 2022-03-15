@@ -7,6 +7,7 @@ enum class AvailableCharset(val charset:Charset) { ISO_8859_1(Charsets.ISO_8859_
 data class Configuration(
     var baseUrl: String = "",
     var authentication: String = "",
+    var storeView: String = "",
     var columnSeparator: String = ";",
     var encoding: AvailableCharset = AvailableCharset.ISO_8859_1
 )

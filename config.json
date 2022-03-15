@@ -1,6 +1,7 @@
 {
   "baseUrl": "https://mag4.fronius.com",
   "auth": "Bearer correctTestBearer",
+  "storeView": "all",
   "columnSeparator": ";",
   "encoding": "ISO_8859_1"
 }

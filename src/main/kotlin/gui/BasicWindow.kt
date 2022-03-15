@@ -19,6 +19,7 @@ class BasicWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInter
 
     private val baseUrlJTF = JTextField()
     private val authJTF = JTextField()
+    private val storeViewJTF = JTextField()
     private val columnSeparatorJTF = JTextField()
     private val encodingJCB = JComboBox(AvailableCharset.values())
     private val loadConfigMenu = JMenuItem("load")
@@ -58,6 +59,10 @@ class BasicWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInter
                             add(Label("Authorization:"))
                             add(authJTF)
                         }
+                        boxLayoutPanel(BoxLayout.X_AXIS) {
+                            add(Label("Store View:"))
+                            add(storeViewJTF)
+                        }
                     }
                     borderPanelWithTitle("CSV settings:") {
                         rowLayout()
@@ -91,6 +96,7 @@ class BasicWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInter
     override fun updateControls(config: Configuration) {
         baseUrlJTF.text = config.baseUrl
         authJTF.text = config.authentication
+        storeViewJTF.text = config.storeView
         columnSeparatorJTF.text = config.columnSeparator
         encodingJCB.selectedItem = config.encoding
         attributeExtractionPanel.updateControls(config)
@@ -104,6 +110,8 @@ class BasicWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInter
 
         newConfig.columnSeparator = columnSeparatorJTF.text
         if (sel is AvailableCharset) newConfig.encoding = sel
+
+        newConfig.storeView = storeViewJTF.text
 
         newConfig = attributeExtractionPanel.updateConfigFromGui(newConfig)
         newConfig = categoryExportPanel.updateConfigFromGui(newConfig)
