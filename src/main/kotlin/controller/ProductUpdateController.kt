@@ -4,6 +4,10 @@ import gui.panel.ProductUpdateComponent
 import magentoAPIClient.*
 import model.*
 import org.json.JSONObject
+import selectionTable.controller.SelectionTableController
+import selectionTable.model.ProductTableModel
+import selectionTable.view.SelectionTableJFrame
+import java.awt.EventQueue
 import javax.swing.JOptionPane
 
 class ProductUpdateController(private val base: BaseController, private val view: ProductUpdateComponent) {
@@ -12,42 +16,34 @@ class ProductUpdateController(private val base: BaseController, private val view
 
     private val productList = mutableListOf<Product>()
 
+
     fun initController() {
         view.addBtnActionHandlers({
             queryHandling(base, refreshTimeoutWhileLoading, {
                 this.config = base.updateConfigFromGui(this.config)
                 queryProducts()
             }, {}, {
-                view.updateInfoLabels(productList.size, 0)
+                updateInfoLabels()
             })
         },{
-
+            EventQueue.invokeLater {
+                val tableModel = ProductTableModel(productList)
+                tableModel.addTableModelListener { updateInfoLabels() }
+                val frame = SelectionTableJFrame("Select products", tableModel)
+                val selectionTable = SelectionTableController(frame)
+                selectionTable.initController()
+            }
         })
 
-        view.updateInfoLabels(0, 0)
+        updateInfoLabels()
+    }
+
+    private fun updateInfoLabels() {
+        view.updateInfoLabels(productList.size, productList.filter { it.selected }.size)
     }
 
 
     //region query and parsing list
-
-//    private fun parseCategoryJsonObject(json: JSONObject): CategoryBasics {
-//        val cat = CategoryBasics(
-//            json.getInt("id"),
-//            json.getInt("parent_id"),
-//            json.getString("name"),
-//            json.getBoolean("is_active", false),
-//            json.getInt("position"),
-//            json.getInt("level"),
-//            json.getInt("product_count", 0)
-//        )
-//
-//        val children = json.getJSONArray("children_data", JSONArray())
-//
-//        children.forEach {
-//            cat.children.add(parseCategoryJsonObject(it as JSONObject))
-//        }
-//        return cat
-//    }
 
     private fun queryProducts() {
         productList.clear()

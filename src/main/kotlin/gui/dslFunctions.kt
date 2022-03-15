@@ -64,12 +64,12 @@ fun Container.center(init: JPanel.() -> Unit): JComponent {
     return p
 }
 
-fun JPanel.rowLayout() {
+fun Container.rowLayout() {
     val l = BoxLayout(this, BoxLayout.Y_AXIS)
     layout = l
 }
 
-fun JPanel.flowLayoutPanel(init: JPanel.() -> Unit): JPanel {
+fun Container.flowLayoutPanel(init: JPanel.() -> Unit): JPanel {
     val l = JPanel()
     val fl= FlowLayout()
     l.layout = fl
@@ -78,7 +78,7 @@ fun JPanel.flowLayoutPanel(init: JPanel.() -> Unit): JPanel {
     return l
 }
 
-fun JPanel.boxLayoutPanel(axis:Int, init: JPanel.() -> Unit): JPanel {
+fun Container.boxLayoutPanel(axis:Int, init: JPanel.() -> Unit): JPanel {
     val l = JPanel()
     val bl = BoxLayout(l, axis)
     l.layout = bl

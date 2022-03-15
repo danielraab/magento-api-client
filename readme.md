@@ -7,11 +7,14 @@
 * preconfigure application with `config.json`
 
 ### Product Attribute Exporter
-export:
-* product attribute sets
-* product attributes
-* product attribute options
-
+* export:
+  * attribute
+    * product attribute sets
+    * product attributes
+    * product attribute options
+  * categories
+* update
+  * products
 ## look and feel
 
 TODO: add screenshots
