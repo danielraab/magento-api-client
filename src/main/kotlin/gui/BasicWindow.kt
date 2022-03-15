@@ -2,6 +2,7 @@ package gui
 
 import gui.panel.AttributeExtractionComponent
 import gui.panel.CategoryExportComponent
+import gui.panel.ProductUpdateComponent
 import model.AvailableCharset
 import model.Configuration
 import java.awt.*
@@ -11,8 +12,11 @@ import kotlin.system.exitProcess
 class BasicWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInterface {
 
     private val tabbedPanel = JTabbedPane()
+
     val attributeExtractionPanel = AttributeExtractionComponent()
     val categoryExportPanel = CategoryExportComponent()
+    val productUpdaterComponent = ProductUpdateComponent()
+
     private val baseUrlJTF = JTextField()
     private val authJTF = JTextField()
     private val columnSeparatorJTF = JTextField()
@@ -23,8 +27,10 @@ class BasicWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInter
     init {
         attributeExtractionPanel.createUI()
         categoryExportPanel.createUI()
-        tabbedPanel.addTab("Read Attributes", attributeExtractionPanel)
-        tabbedPanel.addTab("Read Categories", categoryExportPanel)
+        productUpdaterComponent.createUI()
+        tabbedPanel.addTab("Attributes", attributeExtractionPanel)
+        tabbedPanel.addTab("Categories", categoryExportPanel)
+        tabbedPanel.addTab("Products", productUpdaterComponent)
         createUi()
     }
 
@@ -89,6 +95,7 @@ class BasicWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInter
         encodingJCB.selectedItem = config.encoding
         attributeExtractionPanel.updateControls(config)
         categoryExportPanel.updateControls(config)
+        productUpdaterComponent.updateControls(config)
     }
 
     override fun updateConfigFromGui(config: Configuration): Configuration {
@@ -100,12 +107,14 @@ class BasicWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInter
 
         newConfig = attributeExtractionPanel.updateConfigFromGui(newConfig)
         newConfig = categoryExportPanel.updateConfigFromGui(newConfig)
+        newConfig = productUpdaterComponent.updateConfigFromGui(newConfig)
         return newConfig
     }
 
     override fun allControlsEnabled(enabled: Boolean) {
         attributeExtractionPanel.allControlsEnabled(enabled)
         categoryExportPanel.allControlsEnabled(enabled)
+        productUpdaterComponent.allControlsEnabled(enabled)
     }
 //endregion
 

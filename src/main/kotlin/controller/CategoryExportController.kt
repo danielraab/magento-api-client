@@ -87,14 +87,6 @@ class CategoryExportController(private val base: BaseController, private val vie
         return cat
     }
 
-    private fun JSONObject.getBoolean(key: String, default: Boolean) =
-        if (this.has(key)) this.getBoolean(key) else default
-
-    private fun JSONObject.getInt(key: String, default: Int) =
-        if (this.has(key)) this.getInt(key) else default
-
-    private fun JSONObject.getJSONArray(key: String, default: JSONArray) =
-        if (this.has(key)) this.getJSONArray("children_data") else default
 
     private fun queryCategoryDetailsList() {
         val httpResponse = HttpHelper(

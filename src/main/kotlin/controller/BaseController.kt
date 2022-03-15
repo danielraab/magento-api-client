@@ -24,10 +24,12 @@ class BaseController(val view: BasicWindow) {
 
     private val attrExtractionController = AttributeExtractionController(this, view.attributeExtractionPanel)
     private val categoryExportController = CategoryExportController(this, view.categoryExportPanel)
+    private val productUpdateController = ProductUpdateController(this, view.productUpdaterComponent)
 
     fun initController() {
         attrExtractionController.initController()
         categoryExportController.initController()
+        productUpdateController.initController()
 
         view.updateControls(config)
 
@@ -190,3 +192,13 @@ fun queryHandling(
         }
     }.start()
 }
+
+
+fun JSONObject.getBoolean(key: String, default: Boolean) =
+    if (this.has(key)) this.getBoolean(key) else default
+
+fun JSONObject.getInt(key: String, default: Int) =
+    if (this.has(key)) this.getInt(key) else default
+
+fun JSONObject.getJSONArray(key: String, default: JSONArray) =
+    if (this.has(key)) this.getJSONArray(key) else default
