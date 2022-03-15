@@ -13,18 +13,18 @@ class ProductUpdateController(private val base: BaseController, private val view
     private val productList = mutableListOf<Product>()
 
     fun initController() {
-        view.addBtnActionHandlers {
-
+        view.addBtnActionHandlers({
             queryHandling(base, refreshTimeoutWhileLoading, {
                 this.config = base.updateConfigFromGui(this.config)
                 queryProducts()
             }, {}, {
-                view.updateInfoLabels(productList.size)
+                view.updateInfoLabels(productList.size, 0)
             })
+        },{
 
-        }
+        })
 
-        view.updateInfoLabels(0)
+        view.updateInfoLabels(0, 0)
     }
 
 
