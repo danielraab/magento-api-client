@@ -23,7 +23,7 @@ class ProductUpdateComponent : JPanel(), GuiComponentInterface {
                 add(productListSizeJL)
             }
         }
-        borderPanelWithTitle("pdate products") {
+        borderPanelWithTitle("update products:") {
             rowLayout()
             flowLayoutPanel {
                 add(Label("test"))
