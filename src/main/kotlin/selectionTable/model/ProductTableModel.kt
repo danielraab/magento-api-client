@@ -10,6 +10,10 @@ class ProductTableModel(private val productList: List<Product>) : TableModel {
 
     private val listenerList = mutableListOf<TableModelListener>()
 
+    fun productListChanged() {
+        listenerList.forEach { it.tableChanged(TableModelEvent(this)) }
+    }
+
     override fun getRowCount(): Int {
         return productList.size
     }

@@ -4,9 +4,8 @@ import gui.panel.ProductUpdateComponent
 import magentoAPIClient.*
 import model.*
 import org.json.JSONObject
-import selectionTable.controller.SelectionTableController
 import selectionTable.model.ProductTableModel
-import selectionTable.view.SelectionTableJFrame
+import selectionTable.view.ProductSelectionTableJFrame
 import java.awt.EventQueue
 import javax.swing.JOptionPane
 
@@ -29,9 +28,16 @@ class ProductUpdateController(private val base: BaseController, private val view
             EventQueue.invokeLater {
                 val tableModel = ProductTableModel(productList)
                 tableModel.addTableModelListener { updateInfoLabels() }
-                val frame = SelectionTableJFrame("Select products", tableModel)
-                val selectionTable = SelectionTableController(frame)
-                selectionTable.initController()
+                val frame = ProductSelectionTableJFrame("Select products", tableModel)
+                frame.initMenu({
+                    productList.forEach { it.selected = true }
+                    tableModel.productListChanged()
+                    updateInfoLabels()
+                }, {
+                    productList.forEach { it.selected = false }
+                    tableModel.productListChanged()
+                    updateInfoLabels()
+                })
             }
         })
 

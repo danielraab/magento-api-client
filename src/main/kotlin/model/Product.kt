@@ -1,10 +1,14 @@
 package model
 
-import selectionTable.model.SelectionObjectInterface
 
-data class Product(val id: Int, val sku: String, val name: String, val status: Int, val type: String) :
-    SelectionObjectInterface {
-    override var selected = false
+data class Product(
+    val id: Int,
+    val sku: String,
+    val name: String,
+    val status: Int,
+    val type: String,
+    var selected: Boolean = false
+) {
 
 
     fun updateColumn(columnIndex: Int, aValue: Any?) {

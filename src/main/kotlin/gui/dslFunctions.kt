@@ -112,3 +112,10 @@ fun JPanel.addSpacedBorder(all:Int) = addSpacedBorder(all, all, all, all)
 fun JPanel.addSpacedBorder(top: Int, left: Int, bottom: Int, right: Int) {
     this.border = CompoundBorder(BorderFactory.createEmptyBorder(top, left, bottom, right), this.border)
 }
+
+
+
+fun JFrame.menuBar(init: JMenuBar.() -> Unit) {
+    jMenuBar = JMenuBar()
+    jMenuBar.init()
+}

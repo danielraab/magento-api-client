@@ -87,11 +87,6 @@ class BasicWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInter
     }
 
 
-    private fun menuBar(init: JMenuBar.() -> Unit) {
-        jMenuBar = JMenuBar()
-        jMenuBar.init()
-    }
-
     //region update view functions
     override fun updateControls(config: Configuration) {
         baseUrlJTF.text = config.baseUrl
