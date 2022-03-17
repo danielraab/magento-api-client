@@ -1,4 +1,4 @@
-package magentoAPIClient
+package magentoAPIClient.http
 
 class ProductRequestFactory {
     companion object {

@@ -1,8 +1,8 @@
 package magentoAPIClient.category
 
 import magentoAPIClient.*
+import magentoAPIClient.http.CategoryRequestFactory
 import magentoAPIClient.http.HttpHelper
-import model.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.awt.Component

@@ -3,7 +3,6 @@ package magentoAPIClient
 import magentoAPIClient.attribute.AttributeExtractionController
 import magentoAPIClient.category.CategoryExportController
 import magentoAPIClient.product.ProductUpdateController
-import model.*
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject

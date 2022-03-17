@@ -1,4 +1,4 @@
-package magentoAPIClient
+package magentoAPIClient.http
 
 enum class Method { GET, POST }
 

@@ -1,11 +1,8 @@
 package magentoAPIClient
 
-import gui.*
 import magentoAPIClient.attribute.AttributeExtractionComponent
 import magentoAPIClient.category.CategoryExportComponent
 import magentoAPIClient.product.ProductUpdateComponent
-import model.AvailableCharset
-import model.Configuration
 import java.awt.*
 import javax.swing.*
 import kotlin.system.exitProcess

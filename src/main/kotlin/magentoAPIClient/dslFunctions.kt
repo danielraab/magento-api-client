@@ -1,4 +1,4 @@
-package gui
+package magentoAPIClient
 
 import java.awt.BorderLayout
 import java.awt.Container

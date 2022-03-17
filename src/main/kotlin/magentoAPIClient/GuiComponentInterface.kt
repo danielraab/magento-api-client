@@ -1,7 +1,5 @@
 package magentoAPIClient
 
-import model.Configuration
-
 interface GuiComponentInterface {
 
 

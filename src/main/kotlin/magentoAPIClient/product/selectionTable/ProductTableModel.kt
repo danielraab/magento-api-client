@@ -1,4 +1,4 @@
-package magentoAPIClient.product.selectionTable.model
+package magentoAPIClient.product.selectionTable
 
 import magentoAPIClient.product.Product
 import javax.swing.event.TableModelEvent

@@ -1,4 +1,4 @@
-package model
+package magentoAPIClient
 
 import java.nio.charset.Charset
 

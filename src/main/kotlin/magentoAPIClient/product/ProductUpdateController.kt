@@ -2,10 +2,10 @@ package magentoAPIClient.product
 
 import magentoAPIClient.*
 import magentoAPIClient.http.HttpHelper
-import model.*
+import magentoAPIClient.http.ProductRequestFactory
 import org.json.JSONObject
-import magentoAPIClient.product.selectionTable.model.ProductTableModel
-import magentoAPIClient.product.selectionTable.view.ProductSelectionTableJFrame
+import magentoAPIClient.product.selectionTable.ProductTableModel
+import magentoAPIClient.product.selectionTable.ProductSelectionTableJFrame
 import java.awt.EventQueue
 import javax.swing.JOptionPane
 

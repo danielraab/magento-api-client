@@ -1,7 +1,7 @@
-package magentoAPIClient.product.selectionTable.view
+package magentoAPIClient.product.selectionTable
 
-import gui.menu
-import gui.menuBar
+import magentoAPIClient.menu
+import magentoAPIClient.menuBar
 import javax.swing.*
 import javax.swing.table.TableModel
 

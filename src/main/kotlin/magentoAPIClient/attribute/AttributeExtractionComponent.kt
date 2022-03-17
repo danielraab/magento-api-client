@@ -1,10 +1,10 @@
 package magentoAPIClient.attribute
 
 import magentoAPIClient.GuiComponentInterface
-import gui.borderPanelWithTitle
-import gui.flowLayoutPanel
-import gui.rowLayout
-import model.Configuration
+import magentoAPIClient.borderPanelWithTitle
+import magentoAPIClient.flowLayoutPanel
+import magentoAPIClient.rowLayout
+import magentoAPIClient.Configuration
 import java.awt.Label
 import javax.swing.*
 

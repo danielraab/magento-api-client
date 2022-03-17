@@ -2,7 +2,8 @@ package magentoAPIClient.attribute
 
 import magentoAPIClient.*
 import magentoAPIClient.http.HttpHelper
-import model.Configuration
+import magentoAPIClient.Configuration
+import magentoAPIClient.http.ProductRequestFactory
 import org.json.JSONArray
 import org.json.JSONObject
 import java.awt.Component
