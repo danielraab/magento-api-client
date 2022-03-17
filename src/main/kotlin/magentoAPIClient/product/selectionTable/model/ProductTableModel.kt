@@ -1,6 +1,6 @@
-package selectionTable.model
+package magentoAPIClient.product.selectionTable.model
 
-import model.Product
+import magentoAPIClient.product.Product
 import javax.swing.event.TableModelEvent
 import javax.swing.event.TableModelListener
 import javax.swing.table.TableModel

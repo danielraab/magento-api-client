@@ -1,12 +1,12 @@
-import controller.BaseController
-import gui.BasicWindow
+import magentoAPIClient.BaseController
+import magentoAPIClient.BaseWindow
 import java.awt.EventQueue
 
 
 fun main() {
 
     EventQueue.invokeLater {
-        val frame = BasicWindow()
+        val frame = BaseWindow()
         val baseController = BaseController(frame)
         baseController.initController()
     }

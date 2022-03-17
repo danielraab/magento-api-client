@@ -1,4 +1,7 @@
-package model
+package magentoAPIClient.attribute
+
+import magentoAPIClient.quote
+
 
 data class AttributeOption(val valueId:String, val label: String) {companion object} //the id is not unique
 
@@ -17,7 +20,6 @@ data class Attribute(
 data class AttributeSet(val id: Int, val name: String, val attributes:MutableMap<Int, Attribute> = mutableMapOf()) {companion object}
 
 
-fun String.quote() = "\"${this.replace("\"", "\"\"")}\""
 
 //region csv extension functions
 

@@ -1,5 +1,7 @@
-package magentoAPIClient
+package magentoAPIClient.http
 
+import magentoAPIClient.Method
+import magentoAPIClient.RequestInfo
 import java.net.URI
 import java.net.URLEncoder
 import java.net.http.HttpClient

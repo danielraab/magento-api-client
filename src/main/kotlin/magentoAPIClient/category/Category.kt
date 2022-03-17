@@ -1,4 +1,6 @@
-package model
+package magentoAPIClient.category
+
+import magentoAPIClient.quote
 
 data class CategoryBasics(
     val id: Int,

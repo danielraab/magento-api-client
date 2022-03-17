@@ -1,15 +1,16 @@
-package gui
+package magentoAPIClient
 
-import gui.panel.AttributeExtractionComponent
-import gui.panel.CategoryExportComponent
-import gui.panel.ProductUpdateComponent
+import gui.*
+import magentoAPIClient.attribute.AttributeExtractionComponent
+import magentoAPIClient.category.CategoryExportComponent
+import magentoAPIClient.product.ProductUpdateComponent
 import model.AvailableCharset
 import model.Configuration
 import java.awt.*
 import javax.swing.*
 import kotlin.system.exitProcess
 
-class BasicWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInterface {
+class BaseWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInterface {
 
     private val tabbedPanel = JTabbedPane()
 

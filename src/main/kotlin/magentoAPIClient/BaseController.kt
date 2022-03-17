@@ -1,6 +1,8 @@
-package controller
+package magentoAPIClient
 
-import gui.BasicWindow
+import magentoAPIClient.attribute.AttributeExtractionController
+import magentoAPIClient.category.CategoryExportController
+import magentoAPIClient.product.ProductUpdateController
 import model.*
 import org.json.JSONArray
 import org.json.JSONException
@@ -17,7 +19,7 @@ import javax.swing.JOptionPane
 const val refreshTimeoutWhileLoading: Long = 2000
 private const val startupConfigFilePath = "./config.json"
 
-class BaseController(val view: BasicWindow) {
+class BaseController(val view: BaseWindow) {
 
     private var config = Configuration()
 

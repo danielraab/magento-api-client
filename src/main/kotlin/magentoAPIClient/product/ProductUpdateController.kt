@@ -1,11 +1,11 @@
-package controller
+package magentoAPIClient.product
 
-import gui.panel.ProductUpdateComponent
 import magentoAPIClient.*
+import magentoAPIClient.http.HttpHelper
 import model.*
 import org.json.JSONObject
-import selectionTable.model.ProductTableModel
-import selectionTable.view.ProductSelectionTableJFrame
+import magentoAPIClient.product.selectionTable.model.ProductTableModel
+import magentoAPIClient.product.selectionTable.view.ProductSelectionTableJFrame
 import java.awt.EventQueue
 import javax.swing.JOptionPane
 

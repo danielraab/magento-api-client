@@ -1,4 +1,4 @@
-package model
+package magentoAPIClient.product
 
 
 data class Product(

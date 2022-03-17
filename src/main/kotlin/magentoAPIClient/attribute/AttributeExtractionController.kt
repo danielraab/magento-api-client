@@ -1,8 +1,8 @@
-package controller
+package magentoAPIClient.attribute
 
-import gui.panel.AttributeExtractionComponent
 import magentoAPIClient.*
-import model.*
+import magentoAPIClient.http.HttpHelper
+import model.Configuration
 import org.json.JSONArray
 import org.json.JSONObject
 import java.awt.Component
@@ -68,7 +68,7 @@ class AttributeExtractionController(private val base: BaseController, private va
             if (it is JSONObject) {
                 val id = it.get("attribute_set_id").toString().toInt()
                 if (attributeSets.containsKey(id)) {
-                    println("AttributeSet: $it already exists")
+                    println("magentoAPIClient.attribute.AttributeSet: $it already exists")
                 } else {
                     attributeSets[id] = AttributeSet(id, it.get("attribute_set_name").toString())
                 }

@@ -1,4 +1,4 @@
-package gui
+package magentoAPIClient
 
 import model.Configuration
 

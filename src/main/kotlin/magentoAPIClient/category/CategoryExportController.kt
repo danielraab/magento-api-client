@@ -1,7 +1,7 @@
-package controller
+package magentoAPIClient.category
 
-import gui.panel.CategoryExportComponent
 import magentoAPIClient.*
+import magentoAPIClient.http.HttpHelper
 import model.*
 import org.json.JSONArray
 import org.json.JSONObject

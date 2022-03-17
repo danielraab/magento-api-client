@@ -1,4 +1,4 @@
-package selectionTable.view
+package magentoAPIClient.product.selectionTable.view
 
 import gui.menu
 import gui.menuBar

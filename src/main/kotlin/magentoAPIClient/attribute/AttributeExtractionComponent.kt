@@ -1,6 +1,6 @@
-package gui.panel
+package magentoAPIClient.attribute
 
-import gui.GuiComponentInterface
+import magentoAPIClient.GuiComponentInterface
 import gui.borderPanelWithTitle
 import gui.flowLayoutPanel
 import gui.rowLayout
