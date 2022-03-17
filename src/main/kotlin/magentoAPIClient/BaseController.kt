@@ -14,8 +14,9 @@ import java.nio.charset.Charset
 import javax.swing.JFileChooser
 import javax.swing.JFrame
 import javax.swing.JOptionPane
+import javax.swing.SwingWorker
 
-const val refreshTimeoutWhileLoading: Long = 2000
+const val refreshTimeoutWhileLoading: Long = 1000
 private const val startupConfigFilePath = "./config.json"
 
 class BaseController(val view: BaseWindow) {
@@ -171,27 +172,29 @@ fun queryHandling(
 ) {
     base.allControlsEnabled(false)
 
-    Thread {
-        try {
-            var isRefreshingAllowed = true
-            Thread {
-                while (isRefreshingAllowed) {
-                    EventQueue.invokeLater {
-                        recurringGuiUpdate()
-                    }
-                    Thread.sleep(guiRefreshInterval)
-                }
-            }.start()
+    var isWorking = true;
+
+    object : SwingWorker<Void, Void>() {
+        override fun doInBackground(): Void? {
             queryJob()
-            isRefreshingAllowed = false
-        } catch (e: Exception) {
-            e.printStackTrace()
-        } finally {
+            isWorking = false
+            return null
+        }
+
+        override fun done() {
+            recurringGuiUpdate()
+            afterGuiUpdate()
+            base.allControlsEnabled(true)
+        }
+
+    }.execute()
+
+    Thread {
+        while (isWorking) {
             EventQueue.invokeLater {
                 recurringGuiUpdate()
-                afterGuiUpdate()
-                base.allControlsEnabled(true)
             }
+            Thread.sleep(guiRefreshInterval)
         }
     }.start()
 }

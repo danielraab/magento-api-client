@@ -23,9 +23,7 @@ class AttributeExtractionController(private val base: BaseController, private va
             queryHandling(base, refreshTimeoutWhileLoading, {
                 this.config = base.updateConfigFromGui(this.config)
                 queryShop()
-            }, {
-                view.updateInfoLabels(attributeSets.size, attributes.size, attributeOptions.size)
-            },{})
+            }, {}, { view.updateInfoLabels(attributeSets.size, attributes.size, attributeOptions.size) })
         }
 
         view.addSaveAttributeSetsBtnAction { saveAttributeSetsToCSV(view) }
@@ -59,7 +57,8 @@ class AttributeExtractionController(private val base: BaseController, private va
 
     private fun queryAttributeSets() {
 
-        val result = HttpHelper(ProductRequestFactory.listAttributeSets(config.baseUrl, config.authentication)).sendRequest()
+        val result =
+            HttpHelper(ProductRequestFactory.listAttributeSets(config.baseUrl, config.authentication)).sendRequest()
         val jsonRoot = result.body().toJSONObject()
 
 
@@ -84,7 +83,8 @@ class AttributeExtractionController(private val base: BaseController, private va
 
     private fun queryAllAttributes() {
 
-        val result = HttpHelper(ProductRequestFactory.listAttributes(config.baseUrl, config.authentication)).sendRequest()
+        val result =
+            HttpHelper(ProductRequestFactory.listAttributes(config.baseUrl, config.authentication)).sendRequest()
         val jsonRoot = result.body().toJSONObject()
 
         val itemArr = jsonRoot.getJSONArray("items")
@@ -114,7 +114,13 @@ class AttributeExtractionController(private val base: BaseController, private va
         attributeSets.forEach { attrSet ->
 
             val result =
-                HttpHelper(ProductRequestFactory.attributesOfAttributeSet(config.baseUrl, config.authentication, attrSetId=attrSet.key)).sendRequest()
+                HttpHelper(
+                    ProductRequestFactory.attributesOfAttributeSet(
+                        config.baseUrl,
+                        config.authentication,
+                        attrSetId = attrSet.key
+                    )
+                ).sendRequest()
 
             result.body().toJSONArray().forEach { attrJsonObj ->
                 if (attrJsonObj is JSONObject) {
