@@ -2,7 +2,6 @@ package magentoAPIClient
 
 import magentoAPIClient.attribute.AttributeExtractionController
 import magentoAPIClient.category.CategoryExportController
-import magentoAPIClient.product.ProductAttributeUpdate
 import magentoAPIClient.product.ProductUpdateController
 import magentoAPIClient.product.toJSONObject
 import magentoAPIClient.product.toProductAttributeUpdateObj
@@ -53,7 +52,7 @@ class BaseController(val view: BaseWindow) {
                 } catch (e: JSONException) {
                     println("unable to read json file:")
                     println(configStr)
-                    JOptionPane.showMessageDialog(view, "no valid config file.")
+                    JOptionPane.showMessageDialog(view, "no valid config file.", "error loading config", JOptionPane.ERROR_MESSAGE)
                 }
             }
         }
