@@ -86,15 +86,15 @@ class BaseWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInterf
 
 
     //region update view functions
-    override fun updateControls(config: Configuration) {
+    override fun updateGuiFromConfig(config: Configuration) {
         baseUrlJTF.text = config.baseUrl
         authJTF.text = config.authentication
         storeViewJTF.text = config.storeView
         columnSeparatorJTF.text = config.columnSeparator
         encodingJCB.selectedItem = config.encoding
-        attributeExtractionPanel.updateControls(config)
-        categoryExportPanel.updateControls(config)
-        productUpdaterComponent.updateControls(config)
+        attributeExtractionPanel.updateGuiFromConfig(config)
+        categoryExportPanel.updateGuiFromConfig(config)
+        productUpdaterComponent.updateGuiFromConfig(config)
     }
 
     override fun updateConfigFromGui(config: Configuration): Configuration {

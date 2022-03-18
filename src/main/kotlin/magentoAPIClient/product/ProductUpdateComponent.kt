@@ -1,10 +1,6 @@
 package magentoAPIClient.product
 
-import magentoAPIClient.GuiComponentInterface
-import magentoAPIClient.borderPanelWithTitle
-import magentoAPIClient.flowLayoutPanel
-import magentoAPIClient.rowLayout
-import magentoAPIClient.Configuration
+import magentoAPIClient.*
 import java.awt.Label
 import javax.swing.*
 
@@ -14,6 +10,12 @@ class ProductUpdateComponent : JPanel(), GuiComponentInterface {
     private val productListSizeJL = JLabel("0")
     private val selectProductsBtn = JButton("selectProducts")
     private val selectProductsCntJL = JLabel("0")
+
+    private val attrTypeJCB = JComboBox<ProductAttributeType>(ProductAttributeType.values())
+    private val attrValueTypeJCB = JComboBox<ProductAttributeValueType>(ProductAttributeValueType.values())
+    private val attrKeyJTF = JTextField().also { it.columns = 10 }
+    private val attrValueJTF = JTextField().also { it.columns = 10 }
+
 
     fun createUI() {
         rowLayout()
@@ -38,15 +40,35 @@ class ProductUpdateComponent : JPanel(), GuiComponentInterface {
         borderPanelWithTitle("update products:") {
             rowLayout()
             flowLayoutPanel {
-                add(Label("test"))
+                add(attrTypeJCB)
+                add(attrValueTypeJCB)
+                add(attrKeyJTF)
+                add(attrValueJTF)
             }
         }
     }
 
-    override fun updateControls(config: Configuration) {
+    override fun updateGuiFromConfig(config: Configuration) {
+        if(config.productAttributeUpdateList.isNotEmpty()) {
+            val singleUpdateData = config.productAttributeUpdateList[0]
+            attrTypeJCB.selectedItem = singleUpdateData.type
+            attrValueTypeJCB.selectedItem = singleUpdateData.valueType
+            attrKeyJTF.text = singleUpdateData.key
+            attrValueJTF.text = singleUpdateData.value
+        }
+    }
+
+    private fun getProductAttributeUpdateData():ProductAttributeUpdate {
+        return ProductAttributeUpdate(attrTypeJCB.selectedItem as ProductAttributeType,
+            attrValueTypeJCB.selectedItem as ProductAttributeValueType,
+            attrKeyJTF.text,
+            attrValueJTF.text
+        )
     }
 
     override fun updateConfigFromGui(config: Configuration): Configuration {
+        config.productAttributeUpdateList.clear()
+        config.productAttributeUpdateList.add(getProductAttributeUpdateData())
         return config
     }
 

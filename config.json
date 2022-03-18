@@ -1,7 +1,21 @@
 {
+  "productAttributeUpdates": [
+    {
+      "valueType": "NUMBER",
+      "type": "BASIC",
+      "value": "1",
+      "key": "status"
+    },
+    {
+      "valueType": "NUMBER",
+      "type": "BASIC",
+      "value": "1",
+      "key": "status"
+    }
+  ],
   "baseUrl": "https://mag4.fronius.com",
   "auth": "Bearer correctTestBearer",
-  "storeView": "all",
   "columnSeparator": ";",
+  "storeView": "all",
   "encoding": "ISO_8859_1"
 }

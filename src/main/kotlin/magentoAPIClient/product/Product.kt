@@ -1,5 +1,8 @@
 package magentoAPIClient.product
 
+import magentoAPIClient.AvailableCharset
+import org.json.JSONObject
+
 
 data class Product(
     val id: Int,
@@ -9,7 +12,6 @@ data class Product(
     val type: String,
     var selected: Boolean = false
 ) {
-
 
     fun updateColumn(columnIndex: Int, aValue: Any?) {
         if (columnIndex == 0 && aValue is Boolean) {
@@ -30,6 +32,38 @@ data class Product(
             Int::class.javaObjectType,
             String::class.javaObjectType
         )
-
     }
+}
+
+enum class ProductAttributeType(val typeKey: String) {
+    BASIC(""),
+    CUSTOM("custom_attributes"),
+    EXTENSION("extension_attributes")
+}
+
+enum class ProductAttributeValueType() { STRING, NUMBER, PLAIN }
+
+data class ProductAttributeUpdate(
+    val type: ProductAttributeType,
+    val valueType: ProductAttributeValueType,
+    val key: String,
+    val value: String
+)
+
+fun ProductAttributeUpdate.toJSONObject(): JSONObject {
+    val obj = JSONObject()
+    obj.put("type", this.type)
+    obj.put("valueType", this.valueType)
+    obj.put("key", this.key)
+    obj.put("value", this.value)
+    return obj
+}
+
+fun JSONObject.toProductAttributeUpdateObj(): ProductAttributeUpdate {
+    return ProductAttributeUpdate(
+        ProductAttributeType.valueOf(this.getString("type")),
+        ProductAttributeValueType.valueOf(this.getString("valueType")),
+        this.getString("key"),
+        this.getString("value")
+    )
 }

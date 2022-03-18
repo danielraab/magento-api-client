@@ -2,7 +2,10 @@ package magentoAPIClient
 
 import magentoAPIClient.attribute.AttributeExtractionController
 import magentoAPIClient.category.CategoryExportController
+import magentoAPIClient.product.ProductAttributeUpdate
 import magentoAPIClient.product.ProductUpdateController
+import magentoAPIClient.product.toJSONObject
+import magentoAPIClient.product.toProductAttributeUpdateObj
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -33,7 +36,7 @@ class BaseController(val view: BaseWindow) {
         categoryExportController.initController()
         productUpdateController.initController()
 
-        view.updateControls(config)
+        view.updateGuiFromConfig(config)
 
         view.addSaveConfigMenuItem {
             config = view.updateConfigFromGui(config)
@@ -45,7 +48,7 @@ class BaseController(val view: BaseWindow) {
             if (configStr.isNotBlank()) {
                 try {
                     config = configStr.toJSONObject().toConfigObject()
-                    view.updateControls(config)
+                    view.updateGuiFromConfig(config)
                     JOptionPane.showMessageDialog(view, "Config successfully loaded.")
                 } catch (e: JSONException) {
                     println("unable to read json file:")
@@ -71,7 +74,7 @@ class BaseController(val view: BaseWindow) {
             val configStr = configFile.readText(Charsets.UTF_8)
             try {
                 config = configStr.toJSONObject().toConfigObject()
-                view.updateControls(config)
+                view.updateGuiFromConfig(config)
                 JOptionPane.showMessageDialog(view, "Config successfully loaded.")
             } catch (e: JSONException) {
                 println("unable to read json file:")
@@ -92,17 +95,26 @@ class BaseController(val view: BaseWindow) {
         root.put("storeView", this.storeView)
         root.put("columnSeparator", this.columnSeparator)
         root.put("encoding", this.encoding)
+        root.put(
+            "productAttributeUpdates",
+            JSONArray().also { arr -> arr.putAll(this.productAttributeUpdateList.map { it.toJSONObject() }) })
         return root
     }
 
+
     private fun JSONObject.toConfigObject(): Configuration {
-        return Configuration(
+        val cnf = Configuration(
             this.getString("baseUrl"),
             this.getString("auth"),
             this.getString("storeView"),
             this.getString("columnSeparator"),
             AvailableCharset.valueOf(this.getString("encoding"))
         )
+
+        this.getJSONArray("productAttributeUpdates")
+            .forEach { cnf.productAttributeUpdateList.add((it as JSONObject).toProductAttributeUpdateObj()) }
+
+        return cnf
     }
     //endregion
 }
@@ -174,11 +186,14 @@ fun queryHandling(
 
     var isWorking = true;
 
-    object : SwingWorker<Void, Void>() {
-        override fun doInBackground(): Void? {
+    object : SwingWorker<Unit, Int>() {
+        override fun doInBackground() {
             queryJob()
             isWorking = false
-            return null
+        }
+
+        override fun process(chunks: MutableList<Int>?) {
+            recurringGuiUpdate()
         }
 
         override fun done() {
