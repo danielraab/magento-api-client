@@ -110,8 +110,10 @@ class BaseController(val view: BaseWindow) {
             AvailableCharset.valueOf(this.getString("encoding"))
         )
 
-        this.getJSONArray("productAttributeUpdates")
-            .forEach { cnf.productAttributeUpdateList.add((it as JSONObject).toProductAttributeUpdateObj()) }
+        if(this.has("productAttributeUpdates")) {
+            this.getJSONArray("productAttributeUpdates")
+                .forEach { cnf.productAttributeUpdateList.add((it as JSONObject).toProductAttributeUpdateObj()) }
+        }
 
         return cnf
     }
