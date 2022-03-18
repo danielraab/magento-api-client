@@ -39,8 +39,8 @@ class ProductTableModel(private val productList: List<Product>) : TableModel {
     }
 
     override fun setValueAt(aValue: Any?, rowIndex: Int, columnIndex: Int) {
-        listenerList.forEach { it.tableChanged(TableModelEvent(this, rowIndex)) }
         productList[rowIndex].updateColumn(columnIndex, aValue)
+        listenerList.forEach { it.tableChanged(TableModelEvent(this, rowIndex)) }
     }
 
     override fun addTableModelListener(l: TableModelListener?) {

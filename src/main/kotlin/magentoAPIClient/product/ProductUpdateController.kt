@@ -6,6 +6,7 @@ import magentoAPIClient.http.ProductRequestFactory
 import org.json.JSONObject
 import magentoAPIClient.product.selectionTable.ProductTableModel
 import magentoAPIClient.product.selectionTable.ProductSelectionTableJFrame
+import org.json.JSONException
 import java.awt.EventQueue
 import javax.swing.JOptionPane
 
@@ -18,13 +19,13 @@ class ProductUpdateController(private val base: BaseController, private val view
 
     fun initController() {
         view.addBtnActionHandlers({
+            this.config = base.updateConfigFromGui(this.config)
             queryHandling(base, refreshTimeoutWhileLoading, {
-                this.config = base.updateConfigFromGui(this.config)
                 queryProducts()
             }, {}, {
                 updateInfoLabels()
             })
-        },{
+        }, {
             EventQueue.invokeLater {
                 val tableModel = ProductTableModel(productList)
                 tableModel.addTableModelListener { updateInfoLabels() }
@@ -39,6 +40,12 @@ class ProductUpdateController(private val base: BaseController, private val view
                     updateInfoLabels()
                 })
             }
+        }, {
+            this.config = base.updateConfigFromGui(this.config)
+            queryHandling(base, refreshTimeoutWhileLoading, {
+                updateProducts()
+            }, {}, {
+            })
         })
 
         updateInfoLabels()
@@ -55,12 +62,12 @@ class ProductUpdateController(private val base: BaseController, private val view
         productList.clear()
 
         val httpResponse = HttpHelper(
-                ProductRequestFactory.getProductList(
-                    config.baseUrl,
-                    config.authentication,
-                    config.storeView
-                )
-            ).sendRequest()
+            ProductRequestFactory.getProductList(
+                config.baseUrl,
+                config.authentication,
+                config.storeView
+            )
+        ).sendRequest()
         if (httpResponse.statusCode() == 200) {
             val jsonRoot = httpResponse.body().toJSONObject()
             val prodArr = jsonRoot.getJSONArray("items")
@@ -76,7 +83,12 @@ class ProductUpdateController(private val base: BaseController, private val view
         } else {
             println("Unable to read site response.")
             println(httpResponse.body())
-            JOptionPane.showMessageDialog(view, "Unable to read site response.")
+            JOptionPane.showMessageDialog(
+                view,
+                "Unable to read site response.",
+                "error in reading site",
+                JOptionPane.ERROR_MESSAGE
+            )
         }
     }
 
@@ -91,5 +103,46 @@ class ProductUpdateController(private val base: BaseController, private val view
     }
 
     //endregion
+
+
+    private fun updateProducts() {
+        try {
+            productList.filter { it.selected }.forEach {
+//            val httpResponse = HttpHelper(    //TODO
+//                ProductRequestFactory.updateProduct(
+//                    config.baseUrl,
+//                    config.authentication,
+//                    config.storeView,
+//                    it.sku
+//                )
+//            ).sendRequest()
+
+                println(
+                    ProductRequestFactory.updateProduct(
+                        config.baseUrl,
+                        config.authentication,
+                        config.storeView,
+                        it.sku,
+                        config.productAttributeUpdateList
+                    ).body
+                )
+            }
+        } catch (e: JSONException) {
+            JOptionPane.showMessageDialog(
+                view,
+                "Unable to create update message. Check your settings.",
+                "error in creating message.",
+                JOptionPane.ERROR_MESSAGE
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            JOptionPane.showMessageDialog(
+                view,
+                "Unable to create update message. Check your settings.",
+                "error in creating message.",
+                JOptionPane.ERROR_MESSAGE
+            )
+        }
+    }
 
 }

@@ -51,7 +51,7 @@ class AttributeExtractionController(private val base: BaseController, private va
 
         } catch (e: Exception) {
             println("unable to query given url")
-            JOptionPane.showMessageDialog(view, "unable to query given url.")
+            JOptionPane.showMessageDialog(view, "unable to query given url.", "error in query url", JOptionPane.ERROR_MESSAGE)
         }
     }
 

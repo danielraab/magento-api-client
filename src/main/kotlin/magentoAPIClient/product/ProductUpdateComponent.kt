@@ -8,13 +8,14 @@ class ProductUpdateComponent : JPanel(), GuiComponentInterface {
 
     private val queryProductsBtn = JButton("query")
     private val productListSizeJL = JLabel("0")
-    private val selectProductsBtn = JButton("selectProducts")
+    private val selectProductsBtn = JButton("select Products")
     private val selectProductsCntJL = JLabel("0")
 
-    private val attrTypeJCB = JComboBox<ProductAttributeType>(ProductAttributeType.values())
-    private val attrValueTypeJCB = JComboBox<ProductAttributeValueType>(ProductAttributeValueType.values())
-    private val attrKeyJTF = JTextField().also { it.columns = 10 }
-    private val attrValueJTF = JTextField().also { it.columns = 10 }
+    private val attrTypeJCB = JComboBox(ProductAttributeType.values())
+    private val attrValueTypeJCB = JComboBox(ProductAttributeValueType.values())
+    private val attrKeyJTF = JTextField("key").also { it.columns = 10 }
+    private val attrValueJTF = JTextField("value").also { it.columns = 10 }
+    private val updateProductsBtn = JButton("update Products")
 
 
     fun createUI() {
@@ -44,6 +45,9 @@ class ProductUpdateComponent : JPanel(), GuiComponentInterface {
                 add(attrValueTypeJCB)
                 add(attrKeyJTF)
                 add(attrValueJTF)
+            }
+            flowLayoutPanel {
+                add(updateProductsBtn)
             }
         }
     }
@@ -85,9 +89,11 @@ class ProductUpdateComponent : JPanel(), GuiComponentInterface {
 
     fun addBtnActionHandlers(
         queryProductsAction: () -> Unit,
-        selectProductsAction: () -> Unit
+        selectProductsAction: () -> Unit,
+        updateProductsAction: ()->Unit
     ) {
         queryProductsBtn.addActionListener { queryProductsAction() }
         selectProductsBtn.addActionListener { selectProductsAction() }
+        updateProductsBtn.addActionListener { updateProductsAction() }
     }
 }

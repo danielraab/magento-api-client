@@ -1,5 +1,12 @@
 package magentoAPIClient.http
 
+import magentoAPIClient.product.ProductAttributeType
+import magentoAPIClient.product.ProductAttributeUpdate
+import magentoAPIClient.product.ProductAttributeValueType
+import magentoAPIClient.toJSONObject
+import org.json.JSONObject
+import org.json.JSONTokener
+
 class ProductRequestFactory {
     companion object {
 
@@ -39,7 +46,37 @@ class ProductRequestFactory {
             mutableMapOf("searchCriteria[pageSize]" to pageSize.toString()),
             mutableMapOf(Header.AUTHORIZATION to authentication)
         )
+
+
+        fun updateProduct(baseUrl: String, authentication: String, storeView:String?, sku:String, updateAttrList:List<ProductAttributeUpdate>) = RequestInfo(        //TODO add json object??
+            baseUrl,
+            "/rest/${storeView?.let { "$this/" }}V1/products/$sku",
+            Method.PUT,
+            mutableMapOf(),
+            mutableMapOf(Header.AUTHORIZATION to authentication),
+            JSONObject().also { prod ->
+                prod.put("product", updateAttrList.toUpdateObject())       //TODO add content
+            }.toString()
+        )
     }
+}
+
+fun List<ProductAttributeUpdate>.toUpdateObject(): JSONObject {
+    val update = JSONObject()
+
+    this.filter { it.type == ProductAttributeType.BASIC }.forEach {
+        when (it.valueType) {
+            ProductAttributeValueType.PLAIN -> update.put(it.key, JSONTokener(it.value).nextValue())
+            ProductAttributeValueType.STRING -> update.put(it.key, it.value)
+            ProductAttributeValueType.NUMBER -> update.put(it.key, it.value.toInt())
+        }
+    }
+
+    //TODO custom attributes
+
+    //TODO extention attributes
+
+    return update
 }
 
 class CategoryRequestFactory {
