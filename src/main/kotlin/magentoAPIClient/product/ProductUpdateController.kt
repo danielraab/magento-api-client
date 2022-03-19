@@ -108,24 +108,15 @@ class ProductUpdateController(private val base: BaseController, private val view
     private fun updateProducts() {
         try {
             productList.filter { it.selected }.forEach {
-//            val httpResponse = HttpHelper(    //TODO
-//                ProductRequestFactory.updateProduct(
-//                    config.baseUrl,
-//                    config.authentication,
-//                    config.storeView,
-//                    it.sku
-//                )
-//            ).sendRequest()
-
-                println(
+                val httpResponse = HttpHelper(    //TODO
                     ProductRequestFactory.updateProduct(
                         config.baseUrl,
                         config.authentication,
                         config.storeView,
                         it.sku,
                         config.productAttributeUpdateList
-                    ).body
-                )
+                    )
+                ).sendRequest()
             }
         } catch (e: JSONException) {
             JOptionPane.showMessageDialog(

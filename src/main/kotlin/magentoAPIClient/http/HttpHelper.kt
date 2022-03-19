@@ -20,10 +20,13 @@ class HttpHelper(private val requestInfo: RequestInfo) {
         }
 
         val requestBuilder = HttpRequest.newBuilder().uri(URI.create(requestUrl))
-        if(requestInfo.method != Method.GET) throw NotImplementedError()        //TODO implement PUT
+        when(requestInfo.method) {
+            Method.GET -> requestBuilder.GET()
+            Method.POST -> requestBuilder.POST(HttpRequest.BodyPublishers.ofString(requestInfo.body))
+            Method.PUT -> requestBuilder.PUT(HttpRequest.BodyPublishers.ofString(requestInfo.body))
+            else ->  throw NotImplementedError()
+        }
         requestInfo.headers.forEach { (k, v) -> requestBuilder.header(k.key, v) }
-
-        //TODO add body
 
         return client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString())
     }

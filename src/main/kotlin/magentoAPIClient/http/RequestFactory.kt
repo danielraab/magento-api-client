@@ -62,10 +62,10 @@ class ProductRequestFactory {
             updateAttrList: List<ProductAttributeUpdate>
         ) = RequestInfo(
             baseUrl,
-            "/rest/${storeView?.let { "$this/" }}V1/products/$sku",
+            "/rest/${storeView?.let { "$it/" }}V1/products/$sku",
             Method.PUT,
             mutableMapOf(),
-            mutableMapOf(Header.AUTHORIZATION to authentication),
+            mutableMapOf(Header.AUTHORIZATION to authentication, Header.CONTENT_TYPE to HeaderContentType.JSON.key),
             JSONObject().also { prod ->
                 prod.put("product", updateAttrList.toUpdateObject())
             }.toString()

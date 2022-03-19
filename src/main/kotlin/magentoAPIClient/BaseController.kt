@@ -21,7 +21,7 @@ import javax.swing.SwingWorker
 const val refreshTimeoutWhileLoading: Long = 1000
 private const val startupConfigFilePath = "./config.json"
 
-class BaseController(val view: BaseWindow) {
+class BaseController(private val view: BaseWindow) {
 
     private var config = Configuration()
 
@@ -185,7 +185,7 @@ fun queryHandling(
 ) {
     base.allControlsEnabled(false)
 
-    var isWorking = true;
+    var isWorking = true
 
     object : SwingWorker<Unit, Int>() {
         override fun doInBackground() {
