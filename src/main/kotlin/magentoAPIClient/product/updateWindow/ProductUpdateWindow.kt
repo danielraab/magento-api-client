@@ -19,6 +19,7 @@ class ProductUpdateWindow(private val productUpdateModel: ProductUpdateTableMode
 
     private val productUpdateTable = JTable(productUpdateModel)
 
+    private val updateJProg = JProgressBar()
     private val startJBtn = JButton("start")
     private val stopJBtn = JButton("stop")
 
@@ -57,7 +58,6 @@ class ProductUpdateWindow(private val productUpdateModel: ProductUpdateTableMode
                 row: Int,
                 column: Int
             ): Component {
-                //Cells are by default rendered as a JLabel.
                 val l = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as JLabel
 
                 if(value.toString().startsWith("2")) {
@@ -81,12 +81,14 @@ class ProductUpdateWindow(private val productUpdateModel: ProductUpdateTableMode
                 row: Int,
                 column: Int
             ): Component {
-                //Cells are by default rendered as a JLabel.
                 val l = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as JLabel
                 l.toolTipText = "copy to clipboard with a double click."
                 return l
             }
         }
+
+        updateJProg.isStringPainted = true
+        updateJProg.string = ""
 
         isVisible = true
         pack()
@@ -103,11 +105,19 @@ class ProductUpdateWindow(private val productUpdateModel: ProductUpdateTableMode
                 add(JScrollPane(productUpdateTable))
 
                 flowLayoutPanel {
+                    add(updateJProg)
                     add(startJBtn)
                     add(stopJBtn)
                 }
             }
         }
+    }
+
+    fun updateProgressBar(max:Int, value:Int) {
+        updateJProg.minimum = 0
+        updateJProg.maximum = max
+        updateJProg.value = value
+        updateJProg.string = "$value/$max"
     }
 
     fun isRunning(running: Boolean) {

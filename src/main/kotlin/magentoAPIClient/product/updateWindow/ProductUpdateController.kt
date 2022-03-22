@@ -4,14 +4,9 @@ import magentoAPIClient.*
 import magentoAPIClient.http.HttpHelper
 import magentoAPIClient.http.ProductRequestFactory
 import magentoAPIClient.product.Product
-import org.json.JSONObject
-import magentoAPIClient.product.selectionTable.ProductSelectionTableModel
-import magentoAPIClient.product.selectionTable.ProductSelectionTableJFrame
-import magentoAPIClient.product.updateWindow.ProductUpdateWindow
 import org.json.JSONException
-import java.awt.EventQueue
 import java.awt.event.WindowEvent
-import java.net.http.HttpResponse
+import java.net.ConnectException
 import javax.swing.JOptionPane
 import javax.swing.SwingWorker
 
@@ -40,7 +35,7 @@ class ProductUpdateController(val base: BaseController) {
             view!!.isRunning(true)
 
             tableEntryList.forEach { it.response = null }
-            tableModel.triggerTableModelListener()
+            updateView()
 
             this.config = base.updateConfigFromGui(this.config)
 
@@ -50,6 +45,7 @@ class ProductUpdateController(val base: BaseController) {
             updateWorker?.cancel(true)
         })
 
+        updateView()
     }
 
     class UpdateProductsWorker(
@@ -83,6 +79,11 @@ class ProductUpdateController(val base: BaseController) {
                     controller.view,
                     "Update process was cancelled by the user."
                 )
+            } catch (e: ConnectException) {
+                JOptionPane.showMessageDialog(
+                    controller.view,
+                    "Unable to connect to endpoint: ${e.message}"
+                )
             } catch (e: Exception) {
                 e.printStackTrace()
                 JOptionPane.showMessageDialog(
@@ -95,7 +96,7 @@ class ProductUpdateController(val base: BaseController) {
         }
 
         override fun process(chunks: MutableList<UpdateProductEntry>?) {
-            controller.tableModel.triggerTableModelListener()
+            controller.updateView()
         }
 
         override fun done() {
@@ -107,5 +108,10 @@ class ProductUpdateController(val base: BaseController) {
                     "Update process has finished."
                 )
         }
+    }
+
+    private fun updateView() {
+        tableModel.triggerTableModelListener()
+        view?.updateProgressBar(tableEntryList.size, tableEntryList.count { it.response != null })
     }
 }
