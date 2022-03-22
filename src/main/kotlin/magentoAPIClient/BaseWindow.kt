@@ -4,6 +4,8 @@ import magentoAPIClient.attribute.AttributeExtractionComponent
 import magentoAPIClient.category.CategoryExportComponent
 import magentoAPIClient.product.ProductUpdateComponent
 import java.awt.*
+import java.awt.event.KeyEvent
+import java.awt.event.WindowEvent
 import javax.swing.*
 import kotlin.system.exitProcess
 
@@ -31,6 +33,11 @@ class BaseWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInterf
         tabbedPanel.addTab("Categories", categoryExportPanel)
         tabbedPanel.addTab("Products", productUpdaterComponent)
         createUi()
+        rootPane.registerKeyboardAction(
+            { dispatchEvent(WindowEvent(this@BaseWindow, WindowEvent.WINDOW_CLOSING)) },
+            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+            JComponent.WHEN_IN_FOCUSED_WINDOW
+        )
     }
 
     private fun createUi() {
@@ -122,11 +129,11 @@ class BaseWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInterf
 //region add listener functions
 
     fun addSaveConfigMenuItem(action: () -> Unit) {
-        saveConfigMenu.addActionListener {action()}
+        saveConfigMenu.addActionListener { action() }
     }
 
     fun addLoadConfigMenuItem(action: () -> Unit) {
-        loadConfigMenu.addActionListener {action()}
+        loadConfigMenu.addActionListener { action() }
     }
 
 //endregion

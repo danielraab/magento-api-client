@@ -40,13 +40,25 @@ class ProductTableModel(private val productList: List<Product>) : TableModel {
 
     override fun setValueAt(aValue: Any?, rowIndex: Int, columnIndex: Int) {
         productList[rowIndex].updateColumn(columnIndex, aValue)
-        listenerList.forEach { it.tableChanged(TableModelEvent(this, rowIndex)) }
+        notifyListeners(rowIndex)
+    }
+
+    fun toggleSelection(rowIndex: Int) {
+        val curSel = getValueAt(rowIndex, Product.SELECTION_COLUMN_INDEX)
+        if (curSel is Boolean) {
+            productList[rowIndex].updateColumn(Product.SELECTION_COLUMN_INDEX, !curSel)
+            notifyListeners(rowIndex)
+        }
     }
 
     override fun addTableModelListener(l: TableModelListener?) {
         if (l != null) {
             listenerList.add(l)
         }
+    }
+
+    private fun notifyListeners(rowIndex: Int) {
+        listenerList.forEach { it.tableChanged(TableModelEvent(this, rowIndex)) }
     }
 
     override fun removeTableModelListener(l: TableModelListener?) {

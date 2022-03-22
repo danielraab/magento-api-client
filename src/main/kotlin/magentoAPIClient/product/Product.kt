@@ -1,6 +1,5 @@
 package magentoAPIClient.product
 
-import magentoAPIClient.AvailableCharset
 import org.json.JSONObject
 
 
@@ -14,7 +13,7 @@ data class Product(
 ) {
 
     fun updateColumn(columnIndex: Int, aValue: Any?) {
-        if (columnIndex == 0 && aValue is Boolean) {
+        if (columnIndex == SELECTION_COLUMN_INDEX && aValue is Boolean) {
             selected = aValue
         }
     }
@@ -22,6 +21,7 @@ data class Product(
     fun toArray() = arrayOf(selected, id, sku, name, status, type)
 
     companion object {
+        const val SELECTION_COLUMN_INDEX = 0
         fun getColumns() = arrayOf("selected", "id", "sku", "name", "status", "type")
         fun editableColumnArray() = arrayOf(true, false, false, false, false, false)
         fun getColumnsClass() = arrayOf(

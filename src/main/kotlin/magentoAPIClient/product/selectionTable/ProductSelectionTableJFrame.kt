@@ -2,24 +2,44 @@ package magentoAPIClient.product.selectionTable
 
 import magentoAPIClient.menu
 import magentoAPIClient.menuBar
+import java.awt.event.KeyEvent
+import java.awt.event.KeyListener
+import java.awt.event.WindowEvent
 import javax.swing.*
 import javax.swing.table.TableModel
 
 
-class ProductSelectionTableJFrame(title: String, val model: TableModel) : JFrame(title) {
+class ProductSelectionTableJFrame(title: String, model: ProductTableModel) : JFrame(title) {
 
     private val selectAllMenu = JMenuItem("select all")
     private val unselectAllMenu = JMenuItem("unselect all")
+    private val selectionTable = JTable(model)
 
     init {
         createUi()
 
+        rootPane.registerKeyboardAction(
+            { dispatchEvent(WindowEvent(this@ProductSelectionTableJFrame, WindowEvent.WINDOW_CLOSING)) },
+            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+            JComponent.WHEN_IN_FOCUSED_WINDOW
+        )
+
+        selectionTable.addKeyListener(object : KeyListener {
+            override fun keyTyped(e: KeyEvent?) {}
+
+            override fun keyPressed(e: KeyEvent?) {}
+
+            override fun keyReleased(e: KeyEvent?) {
+                if (e?.keyCode == KeyEvent.VK_SPACE && selectionTable.selectedRow > 0)
+                    model.toggleSelection(selectionTable.selectedRow)
+            }
+        })
 
         isVisible = true
         pack()
     }
 
-    fun initMenu(selectAllAction: () -> Unit, unselectAllAction:()->Unit) {
+    fun initMenu(selectAllAction: () -> Unit, unselectAllAction: () -> Unit) {
         selectAllMenu.addActionListener {
             selectAllAction()
         }
@@ -36,8 +56,6 @@ class ProductSelectionTableJFrame(title: String, val model: TableModel) : JFrame
             }
         }
 
-        val table = JTable(model)
-        val jsp = JScrollPane(table)
-        add(jsp)
+        add(JScrollPane(selectionTable))
     }
 }
