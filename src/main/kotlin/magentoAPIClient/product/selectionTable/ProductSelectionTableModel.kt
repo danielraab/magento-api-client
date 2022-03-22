@@ -6,7 +6,7 @@ import javax.swing.event.TableModelListener
 import javax.swing.table.TableModel
 
 
-class ProductTableModel(private val productList: List<Product>) : TableModel {
+class ProductSelectionTableModel(private val productList: List<Product>) : TableModel {
 
     private val listenerList = mutableListOf<TableModelListener>()
 

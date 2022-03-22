@@ -4,17 +4,23 @@ import magentoAPIClient.*
 import magentoAPIClient.http.HttpHelper
 import magentoAPIClient.http.ProductRequestFactory
 import org.json.JSONObject
-import magentoAPIClient.product.selectionTable.ProductTableModel
+import magentoAPIClient.product.selectionTable.ProductSelectionTableModel
 import magentoAPIClient.product.selectionTable.ProductSelectionTableJFrame
+import magentoAPIClient.product.updateWindow.ProductUpdateController
+import magentoAPIClient.product.updateWindow.ProductUpdateWindow
 import org.json.JSONException
 import java.awt.EventQueue
+import java.net.http.HttpResponse
 import javax.swing.JOptionPane
+import javax.swing.SwingWorker
 
-class ProductUpdateController(private val base: BaseController, private val view: ProductUpdateComponent) {
+class ProductController(val base: BaseController, val view: ProductComponent) {
 
     private var config = Configuration()
-
     private val productList = mutableListOf<Product>()
+
+    private var productSelectorFrame: ProductSelectionTableJFrame? = null
+    private var productUpdateController: ProductUpdateController = ProductUpdateController(base)
 
 
     fun initController() {
@@ -26,26 +32,26 @@ class ProductUpdateController(private val base: BaseController, private val view
                 updateInfoLabels()
             })
         }, {
-            EventQueue.invokeLater {
-                val tableModel = ProductTableModel(productList)
-                tableModel.addTableModelListener { updateInfoLabels() }
-                val frame = ProductSelectionTableJFrame("Select products", tableModel)
-                frame.initMenu({
-                    productList.forEach { it.selected = true }
-                    tableModel.productListChanged()
-                    updateInfoLabels()
-                }, {
-                    productList.forEach { it.selected = false }
-                    tableModel.productListChanged()
-                    updateInfoLabels()
-                })
+            if (productSelectorFrame == null || !productSelectorFrame!!.isVisible) {
+                EventQueue.invokeLater {
+                    val tableModel = ProductSelectionTableModel(productList)
+                    tableModel.addTableModelListener { updateInfoLabels() }
+                    productSelectorFrame = ProductSelectionTableJFrame("Select products", tableModel)
+                    productSelectorFrame!!.initMenu({
+                        productList.forEach { it.selected = true }
+                        tableModel.productListChanged()
+                        updateInfoLabels()
+                    }, {
+                        productList.forEach { it.selected = false }
+                        tableModel.productListChanged()
+                        updateInfoLabels()
+                    })
+                }
+            } else {
+                productSelectorFrame!!.toFront()
             }
         }, {
-            this.config = base.updateConfigFromGui(this.config)
-            queryHandling(base, refreshTimeoutWhileLoading, {
-                updateProducts()
-            }, {}, {
-            })
+            productUpdateController.showWindow(productList.filter { it.selected })
         })
 
         updateInfoLabels()
@@ -103,37 +109,4 @@ class ProductUpdateController(private val base: BaseController, private val view
     }
 
     //endregion
-
-
-    private fun updateProducts() {
-        try {
-            productList.filter { it.selected }.forEach {
-                val httpResponse = HttpHelper(    //TODO
-                    ProductRequestFactory.updateProduct(
-                        config.baseUrl,
-                        config.authentication,
-                        config.storeView,
-                        it.sku,
-                        config.productAttributeUpdateList
-                    )
-                ).sendRequest()
-            }
-        } catch (e: JSONException) {
-            JOptionPane.showMessageDialog(
-                view,
-                "Unable to create update message. Check your settings.",
-                "error in creating message.",
-                JOptionPane.ERROR_MESSAGE
-            )
-        } catch (e: Exception) {
-            e.printStackTrace()
-            JOptionPane.showMessageDialog(
-                view,
-                "Unable to create update message. Check your settings.",
-                "error in creating message.",
-                JOptionPane.ERROR_MESSAGE
-            )
-        }
-    }
-
 }

@@ -2,7 +2,7 @@ package magentoAPIClient
 
 import magentoAPIClient.attribute.AttributeExtractionController
 import magentoAPIClient.category.CategoryExportController
-import magentoAPIClient.product.ProductUpdateController
+import magentoAPIClient.product.ProductController
 import magentoAPIClient.product.toJSONObject
 import magentoAPIClient.product.toProductAttributeUpdateObj
 import org.json.JSONArray
@@ -28,7 +28,7 @@ class BaseController(private val view: BaseWindow) {
 
     private val attrExtractionController = AttributeExtractionController(this, view.attributeExtractionPanel)
     private val categoryExportController = CategoryExportController(this, view.categoryExportPanel)
-    private val productUpdateController = ProductUpdateController(this, view.productUpdaterComponent)
+    private val productUpdateController = ProductController(this, view.productUpdaterComponent)
 
     fun initController() {
         attrExtractionController.initController()

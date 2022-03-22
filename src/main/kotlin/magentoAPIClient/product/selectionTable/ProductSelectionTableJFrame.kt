@@ -6,10 +6,9 @@ import java.awt.event.KeyEvent
 import java.awt.event.KeyListener
 import java.awt.event.WindowEvent
 import javax.swing.*
-import javax.swing.table.TableModel
 
 
-class ProductSelectionTableJFrame(title: String, model: ProductTableModel) : JFrame(title) {
+class ProductSelectionTableJFrame(title: String, model: ProductSelectionTableModel) : JFrame(title) {
 
     private val selectAllMenu = JMenuItem("select all")
     private val unselectAllMenu = JMenuItem("unselect all")
@@ -30,8 +29,9 @@ class ProductSelectionTableJFrame(title: String, model: ProductTableModel) : JFr
             override fun keyPressed(e: KeyEvent?) {}
 
             override fun keyReleased(e: KeyEvent?) {
-                if (e?.keyCode == KeyEvent.VK_SPACE && selectionTable.selectedRow > 0)
-                    model.toggleSelection(selectionTable.selectedRow)
+                if (e?.keyCode == KeyEvent.VK_SPACE) {
+                    selectionTable.selectedRows.forEach { model.toggleSelection(it) }
+                }
             }
         })
 

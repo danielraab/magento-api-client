@@ -2,7 +2,7 @@ package magentoAPIClient
 
 import magentoAPIClient.attribute.AttributeExtractionComponent
 import magentoAPIClient.category.CategoryExportComponent
-import magentoAPIClient.product.ProductUpdateComponent
+import magentoAPIClient.product.ProductComponent
 import java.awt.*
 import java.awt.event.KeyEvent
 import java.awt.event.WindowEvent
@@ -15,7 +15,7 @@ class BaseWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInterf
 
     val attributeExtractionPanel = AttributeExtractionComponent()
     val categoryExportPanel = CategoryExportComponent()
-    val productUpdaterComponent = ProductUpdateComponent()
+    val productUpdaterComponent = ProductComponent()
 
     private val baseUrlJTF = JTextField()
     private val authJTF = JTextField()

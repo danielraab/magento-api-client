@@ -4,7 +4,7 @@ import magentoAPIClient.*
 import java.awt.Label
 import javax.swing.*
 
-class ProductUpdateComponent : JPanel(), GuiComponentInterface {
+class ProductComponent : JPanel(), GuiComponentInterface {
 
     private val queryProductsBtn = JButton("query")
     private val productListSizeJL = JLabel("0")
@@ -79,12 +79,14 @@ class ProductUpdateComponent : JPanel(), GuiComponentInterface {
     override fun allControlsEnabled(enabled: Boolean) {
         queryProductsBtn.isEnabled = enabled
         selectProductsBtn.isEnabled = enabled
+        updateProductsBtn.isEnabled = enabled
     }
 
 
     fun updateInfoLabels(productListCnt: Int = -1, selectedProductCnt:Int = -1) {
         if (productListCnt >= 0) productListSizeJL.text = productListCnt.toString()
         if (selectedProductCnt >= 0) selectProductsCntJL.text = selectedProductCnt.toString()
+        updateProductsBtn.isEnabled = selectedProductCnt > 0
     }
 
     fun addBtnActionHandlers(

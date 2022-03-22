@@ -69,6 +69,10 @@ fun Container.rowLayout() {
     layout = l
 }
 
+fun Container.rowLayout(init: JPanel.() -> Unit) {
+    this.boxLayoutPanel(BoxLayout.Y_AXIS, init)
+}
+
 fun Container.flowLayoutPanel(init: JPanel.() -> Unit): JPanel {
     val l = JPanel()
     val fl= FlowLayout()
