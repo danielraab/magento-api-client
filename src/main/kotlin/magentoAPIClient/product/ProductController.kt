@@ -7,14 +7,15 @@ import org.json.JSONObject
 import magentoAPIClient.product.selectionTable.ProductSelectionTableModel
 import magentoAPIClient.product.selectionTable.ProductSelectionTableJFrame
 import magentoAPIClient.product.updateWindow.ProductUpdateController
-import magentoAPIClient.product.updateWindow.ProductUpdateWindow
-import org.json.JSONException
 import java.awt.EventQueue
-import java.net.http.HttpResponse
+import java.lang.IllegalArgumentException
 import javax.swing.JOptionPane
-import javax.swing.SwingWorker
 
-class ProductController(val base: BaseController, val view: ProductComponent) {
+class ProductController(private val base: BaseController, private val view: ProductComponent) {
+
+    companion object {
+        private const val PRODUCT_QUERY_PAGE_SIZE: Int = 300
+    }
 
     private var config = Configuration()
     private val productList = mutableListOf<Product>()
@@ -64,16 +65,20 @@ class ProductController(val base: BaseController, val view: ProductComponent) {
 
     //region query and parsing list
 
-    private fun queryProducts() {
-        productList.clear()
+    private fun queryProductWithPagination(currentPage: Int, pageSize: Int): Int {
+
+        var totalProductCnt = 0
 
         val httpResponse = HttpHelper(
             ProductRequestFactory.getProductList(
                 config.baseUrl,
                 config.authentication,
-                config.storeView
+                config.storeView,
+                pageSize,
+                currentPage
             )
         ).sendRequest()
+
         if (httpResponse.statusCode() == 200) {
             val jsonRoot = httpResponse.body().toJSONObject()
             val prodArr = jsonRoot.getJSONArray("items")
@@ -82,13 +87,36 @@ class ProductController(val base: BaseController, val view: ProductComponent) {
                 productList.add(parseProductJsonObject(it as JSONObject))
             }
 
-            if (prodArr.length() != jsonRoot.getInt("total_count")) {
-                println("given items are not complete:")
-                println(jsonRoot)
-            }
+            totalProductCnt = jsonRoot.getInt("total_count")
+
         } else {
-            println("Unable to read site response.")
+            println("Wrong status code returned: ${httpResponse.statusCode()}")
             println(httpResponse.body())
+            throw IllegalArgumentException()
+        }
+        return totalProductCnt
+    }
+
+    private fun queryProducts() {
+        productList.clear()
+
+        var curPage = 1
+        try {
+            var totalCnt = queryProductWithPagination(curPage, PRODUCT_QUERY_PAGE_SIZE)
+            while (totalCnt > curPage * PRODUCT_QUERY_PAGE_SIZE) {
+                curPage++
+                totalCnt = queryProductWithPagination(curPage, PRODUCT_QUERY_PAGE_SIZE)
+            }
+            if(totalCnt != productList.size) {
+
+                JOptionPane.showMessageDialog(
+                    view,
+                    "There are inconsistencies while reading products. (read ${productList.size} of total $totalCnt)",
+                    "Inconsistent read",
+                    JOptionPane.WARNING_MESSAGE
+                )
+            }
+        } catch (e: IllegalArgumentException) {
             JOptionPane.showMessageDialog(
                 view,
                 "Unable to read site response.",

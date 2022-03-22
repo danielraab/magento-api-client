@@ -44,12 +44,21 @@ class ProductRequestFactory {
         )
 
 
-        fun getProductList(baseUrl: String, authentication: String, storeView: String, pageSize: Int = 300) =
+        fun getProductList(
+            baseUrl: String,
+            authentication: String,
+            storeView: String,
+            pageSize: Int = 300,
+            currentPage: Int = 1
+        ) =
             RequestInfo(
                 baseUrl,
                 "/rest/${storeView}/V1/products",
                 Method.GET,
-                mutableMapOf("searchCriteria[pageSize]" to pageSize.toString()),
+                mutableMapOf(
+                    "searchCriteria[pageSize]" to pageSize.toString(),
+                    "searchCriteria[currentPage]" to currentPage.toString()
+                ),
                 mutableMapOf(Header.AUTHORIZATION to authentication)
             )
 
