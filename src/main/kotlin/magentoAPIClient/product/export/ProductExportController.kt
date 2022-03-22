@@ -3,11 +3,13 @@ package magentoAPIClient.product.export
 import magentoAPIClient.*
 import magentoAPIClient.http.HttpHelper
 import magentoAPIClient.http.ProductRequestFactory
+import org.json.JSONArray
 import org.json.JSONObject
 import java.lang.IllegalArgumentException
 import javax.swing.JOptionPane
 
-class ProductExportController(private val base: BaseController, private val view: ProductExportComponent) : GuiControllerInterface{
+class ProductExportController(private val base: BaseController, private val view: ProductExportComponent) :
+    GuiControllerInterface {
 
     companion object {
         private const val PRODUCT_QUERY_PAGE_SIZE: Int = 300
@@ -17,14 +19,16 @@ class ProductExportController(private val base: BaseController, private val view
     private val productList = mutableListOf<FullProduct>()
 
     override fun initController() {
-        view.addBtnActionHandlers {
+        view.addBtnActionHandlers ({
             this.config = base.updateConfigFromGui(this.config)
             queryHandling(base, refreshTimeoutWhileLoading, {
                 queryFullProducts()
             }, {}, {
                 updateInfoLabels()
             })
-        }
+        },{
+            TODO()
+        })
 
         updateInfoLabels()
     }
@@ -78,7 +82,7 @@ class ProductExportController(private val base: BaseController, private val view
                 curPage++
                 totalCnt = queryProductWithPagination(curPage, PRODUCT_QUERY_PAGE_SIZE)
             }
-            if(totalCnt != productList.size) {
+            if (totalCnt != productList.size) {
 
                 JOptionPane.showMessageDialog(
                     view,
@@ -98,13 +102,23 @@ class ProductExportController(private val base: BaseController, private val view
     }
 
     private fun parseProductJsonObject(jsonObject: JSONObject): FullProduct {
-        return FullProduct(
-            jsonObject.getInt("id"),
-//            jsonObject.getString("sku"),
-//            jsonObject.getString("name"),
-//            jsonObject.getInt("status"),
-//            jsonObject.getString("type_id")
-        )
+        val newFullProd = FullProduct(jsonObject.getInt("id"))
+
+        jsonObject.keys().forEach { outerAttr ->
+            when (outerAttr) {
+                "custom_attributes" -> (jsonObject.get(outerAttr) as JSONArray).forEach {
+                    newFullProd.customAttrMap[(it as JSONObject).getString("attribute_code")] = it.get("value")
+                }
+                "extension_attributes" -> {
+                    val extAttrObj = (jsonObject.get(outerAttr) as JSONObject)
+                    extAttrObj.keys().forEach {
+                        newFullProd.extAttrMap[it] = extAttrObj.get(it)
+                    }
+                }
+                else -> newFullProd.simpleAttrMap[outerAttr] = jsonObject.get(outerAttr)
+            }
+        }
+        return newFullProd
     }
 
     //endregion
