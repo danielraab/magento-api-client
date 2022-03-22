@@ -53,7 +53,7 @@ class ProductSelectionTableJFrame(title: String, model: ProductSelectionTableMod
 
             override fun keyReleased(e: KeyEvent?) {
                 if (e?.keyCode == KeyEvent.VK_SPACE) {
-                    selectionTable.selectedRows.forEach { model.toggleSelection(it) }
+                    selectionTable.selectedRows.forEach {model.toggleSelection(selectionTable.convertRowIndexToModel(it))}
                 }
             }
         })

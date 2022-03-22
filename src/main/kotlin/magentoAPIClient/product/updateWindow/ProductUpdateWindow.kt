@@ -5,7 +5,6 @@ import magentoAPIClient.flowLayoutPanel
 import magentoAPIClient.rowLayout
 import java.awt.Color
 import java.awt.Component
-import java.awt.Label
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
@@ -13,8 +12,6 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.event.WindowEvent
 import javax.swing.*
-import javax.swing.event.DocumentEvent
-import javax.swing.event.DocumentListener
 import javax.swing.table.DefaultTableCellRenderer
 
 

@@ -10,7 +10,7 @@ import javax.swing.*
 
 class AttributeExtractionComponent : JPanel(), GuiComponentInterface {
 
-    private val queryAPIJB = JButton("query API")
+    private val queryAPIJB = JButton("query")
     private val attributeSetCntJL = JLabel("0")
     private val attributeCntJL = JLabel("0")
     private val attributeOptionCntJL = JLabel("0")

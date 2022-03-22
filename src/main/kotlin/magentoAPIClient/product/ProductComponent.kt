@@ -24,22 +24,17 @@ class ProductComponent : JPanel(), GuiComponentInterface {
             rowLayout()
             flowLayoutPanel {
                 add(queryProductsBtn)
-            }
-            flowLayoutPanel {
                 add(Label("products cnt:"))
                 add(productListSizeJL)
-            }
-
-            flowLayoutPanel {
-                add(selectProductsBtn)
-            }
-            flowLayoutPanel {
-                add(Label("selected products: "))
-                add(selectProductsCntJL)
             }
         }
         borderPanelWithTitle("update products:") {
             rowLayout()
+            flowLayoutPanel {
+                add(selectProductsBtn)
+                add(Label("selected products: "))
+                add(selectProductsCntJL)
+            }
             flowLayoutPanel {
                 add(attrTypeJCB)
                 add(attrValueTypeJCB)
