@@ -1,10 +1,15 @@
 package magentoAPIClient.product.export
 
 import magentoAPIClient.*
+import magentoAPIClient.category.CategoryBasics
+import magentoAPIClient.category.CategoryDetail
+import magentoAPIClient.category.csvHeader
+import magentoAPIClient.category.toCsvString
 import magentoAPIClient.http.HttpHelper
 import magentoAPIClient.http.ProductRequestFactory
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.IOException
 import java.lang.IllegalArgumentException
 import javax.swing.JOptionPane
 
@@ -19,15 +24,24 @@ class ProductExportController(private val base: BaseController, private val view
     private val productList = mutableListOf<FullProduct>()
 
     override fun initController() {
-        view.addBtnActionHandlers ({
+        view.addBtnActionHandlers({
             this.config = base.updateConfigFromGui(this.config)
             queryHandling(base, refreshTimeoutWhileLoading, {
                 queryFullProducts()
             }, {}, {
                 updateInfoLabels()
             })
-        },{
-            TODO()
+        }, {
+            this.config = base.updateConfigFromGui(this.config)
+            if (productList.isNotEmpty()) {
+                saveDialogHandler(
+                    view,
+                    createProductCSVList(true),
+                    config.encoding.charset
+                )
+            } else {
+                JOptionPane.showMessageDialog(view, "No product to save.")
+            }
         })
 
         updateInfoLabels()
@@ -98,6 +112,21 @@ class ProductExportController(private val base: BaseController, private val view
                 "error in reading site",
                 JOptionPane.ERROR_MESSAGE
             )
+        } catch (e: IOException) {  //TODO --- handle io exception on
+            JOptionPane.showMessageDialog(
+                view,
+                "Unable to connect to site.",
+                "error in reading site",
+                JOptionPane.ERROR_MESSAGE
+            )
+        } catch (e: Exception) {
+            e.printStackTrace()
+            JOptionPane.showMessageDialog(
+                view,
+                "An error occurred while querying site.",
+                "error in reading site",
+                JOptionPane.ERROR_MESSAGE
+            )
         }
     }
 
@@ -122,4 +151,45 @@ class ProductExportController(private val base: BaseController, private val view
     }
 
     //endregion
+
+
+    //region csv creating
+
+    private fun createProductCSVList(withHeader: Boolean): String {
+        val lines = mutableListOf<List<Any>>()
+        if (withHeader) {
+            lines.add(FullProduct.csvHeader())
+        }
+
+        lines.addAll(productList.flatMap { it.toCsvList() })
+
+        return lines.joinToString(System.lineSeparator()) { list -> list.joinToString(config.columnSeparator) { it.toQuoteString() } }
+
+    }
+
+    private fun FullProduct.toCsvList(): List<List<Any>> {
+        val lines = mutableListOf<List<Any>>()
+        val id = this.id
+        val sku = this.simpleAttrMap["sku"] ?: ""
+        val name = this.simpleAttrMap["name"] ?: ""
+
+        this.simpleAttrMap.forEach { lines.add(listOf(id, sku, name, "simple", it.key, it.value)) }
+        this.customAttrMap.forEach { lines.add(listOf(id, sku, name, "custom", it.key, it.value)) }
+        this.extAttrMap.forEach { lines.add(listOf(id, sku, name, "extension", it.key, it.value)) }
+
+        return lines
+    }
+
+    private fun Any.toQuoteString() = when (this) {
+        is Number -> this.toString()
+        else -> this.toString().quote()
+    }
+
+
+    private fun FullProduct.Companion.csvHeader(): List<String> {
+        return listOf("id", "sku", "name", "attr.type", "attr.name", "attr.value")
+    }
+
+    //endregion
 }
+

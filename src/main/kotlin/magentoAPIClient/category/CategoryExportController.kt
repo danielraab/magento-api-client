@@ -133,7 +133,7 @@ class CategoryExportController(private val base: BaseController, private val vie
     private fun saveCategoryDetailListToCSV(parent: Component) {
         if (categoryDetailsList.isNotEmpty()) {
             saveDialogHandler(
-                parent,
+                view,
                 createCategoryDetailsListCSV(
                     withHeader = true,
                     withDetails = true
