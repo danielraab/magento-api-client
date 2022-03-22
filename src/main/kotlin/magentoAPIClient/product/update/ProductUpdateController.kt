@@ -11,7 +11,7 @@ import java.awt.EventQueue
 import java.lang.IllegalArgumentException
 import javax.swing.JOptionPane
 
-class ProductUpdateController(private val base: BaseController, private val view: ProductUpdateComponent) {
+class ProductUpdateController(private val base: BaseController, private val view: ProductUpdateComponent): GuiControllerInterface {
 
     companion object {
         private const val PRODUCT_QUERY_PAGE_SIZE: Int = 300
@@ -24,7 +24,7 @@ class ProductUpdateController(private val base: BaseController, private val view
     private var productUpdateController: ProductUpdateController = ProductUpdateController(base)
 
 
-    fun initController() {
+    override fun initController() {
         view.addBtnActionHandlers({
             this.config = base.updateConfigFromGui(this.config)
             queryHandling(base, refreshTimeoutWhileLoading, {

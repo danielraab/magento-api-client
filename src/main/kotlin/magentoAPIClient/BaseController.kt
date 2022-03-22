@@ -2,7 +2,7 @@ package magentoAPIClient
 
 import magentoAPIClient.attribute.AttributeExtractionController
 import magentoAPIClient.category.CategoryExportController
-import magentoAPIClient.product.update.ProductUpdateController
+import magentoAPIClient.product.ProductController
 import magentoAPIClient.product.update.toJSONObject
 import magentoAPIClient.product.update.toProductAttributeUpdateObj
 import org.json.JSONArray
@@ -21,19 +21,19 @@ import javax.swing.SwingWorker
 const val refreshTimeoutWhileLoading: Long = 1000
 private const val startupConfigFilePath = "./config.json"
 
-class BaseController(private val view: BaseWindow) {
+class BaseController(private val view: BaseWindow): GuiControllerInterface{
 
     private var config = Configuration()
 
 
     private val attrExtractionController = AttributeExtractionController(this, view.attributeExtractionPanel)
     private val categoryExportController = CategoryExportController(this, view.categoryExportPanel)
-    private val productUpdateController = ProductUpdateController(this, view.productComponent.productUpdateComponent)
+    private val productController = ProductController(this, view.productComponent)
 
-    fun initController() {
+    override fun initController() {
         attrExtractionController.initController()
         categoryExportController.initController()
-        productUpdateController.initController()
+        productController.initController()
 
         view.updateGuiFromConfig(config)
 

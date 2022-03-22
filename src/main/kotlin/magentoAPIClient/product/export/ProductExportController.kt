@@ -7,7 +7,7 @@ import org.json.JSONObject
 import java.lang.IllegalArgumentException
 import javax.swing.JOptionPane
 
-class ProductExportController(private val base: BaseController, private val view: ProductExportComponent) {
+class ProductExportController(private val base: BaseController, private val view: ProductExportComponent) : GuiControllerInterface{
 
     companion object {
         private const val PRODUCT_QUERY_PAGE_SIZE: Int = 300
@@ -16,7 +16,7 @@ class ProductExportController(private val base: BaseController, private val view
     private var config = Configuration()
     private val productList = mutableListOf<FullProduct>()
 
-    fun initController() {
+    override fun initController() {
         view.addBtnActionHandlers {
             this.config = base.updateConfigFromGui(this.config)
             queryHandling(base, refreshTimeoutWhileLoading, {

@@ -9,7 +9,7 @@ import org.json.JSONObject
 import java.awt.Component
 import javax.swing.JOptionPane
 
-class AttributeExtractionController(private val base: BaseController, private val view: AttributeExtractionComponent) {
+class AttributeExtractionController(private val base: BaseController, private val view: AttributeExtractionComponent): GuiControllerInterface {
 
     private var attributeSets = mutableMapOf<Int, AttributeSet>()
     private var attributes = mutableMapOf<Int, Attribute>()
@@ -17,7 +17,7 @@ class AttributeExtractionController(private val base: BaseController, private va
 
     private var config = Configuration()
 
-    fun initController() {
+    override fun initController() {
 
         view.addQueryAPIBtnAction {
             queryHandling(base, refreshTimeoutWhileLoading, {

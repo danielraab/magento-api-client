@@ -8,14 +8,14 @@ import org.json.JSONObject
 import java.awt.Component
 import javax.swing.JOptionPane
 
-class CategoryExportController(private val base: BaseController, private val view: CategoryExportComponent) {
+class CategoryExportController(private val base: BaseController, private val view: CategoryExportComponent): GuiControllerInterface {
 
     private var config = Configuration()
 
     private var treeRootCategory: CategoryBasics? = null
     private var categoryDetailsList = mutableListOf<CategoryDetail>()
 
-    fun initController() {
+    override fun initController() {
         view.addBtnActionHandlers({
 
             queryHandling(base, refreshTimeoutWhileLoading, {
