@@ -5,6 +5,7 @@ import magentoAPIClient.flowLayoutPanel
 import magentoAPIClient.rowLayout
 import java.awt.Color
 import java.awt.Component
+import java.awt.Label
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
@@ -12,6 +13,8 @@ import java.awt.event.MouseAdapter
 import java.awt.event.MouseEvent
 import java.awt.event.WindowEvent
 import javax.swing.*
+import javax.swing.event.DocumentEvent
+import javax.swing.event.DocumentListener
 import javax.swing.table.DefaultTableCellRenderer
 
 
@@ -48,6 +51,17 @@ class ProductUpdateWindow(private val productUpdateModel: ProductUpdateTableMode
             }
         })
 
+        columnCustomization()
+
+        updateJProg.isStringPainted = true
+        updateJProg.string = ""
+
+        isVisible = true
+        pack()
+    }
+
+    private fun columnCustomization() {
+
         productUpdateTable.columnModel.getColumn(UpdateProductEntry.COLUMN_RESPONSE_CODE_IDX).cellRenderer = object :
             DefaultTableCellRenderer() {
             override fun getTableCellRendererComponent(
@@ -60,9 +74,9 @@ class ProductUpdateWindow(private val productUpdateModel: ProductUpdateTableMode
             ): Component {
                 val l = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as JLabel
 
-                if(value.toString().startsWith("2")) {
+                if (value.toString().startsWith("2")) {
                     l.background = Color.GREEN
-                } else if(value.toString().isNotEmpty()) {
+                } else if (value.toString().isNotEmpty()) {
                     l.background = Color.RED
                 } else {
                     l.background = Color.LIGHT_GRAY
@@ -86,12 +100,6 @@ class ProductUpdateWindow(private val productUpdateModel: ProductUpdateTableMode
                 return l
             }
         }
-
-        updateJProg.isStringPainted = true
-        updateJProg.string = ""
-
-        isVisible = true
-        pack()
     }
 
     fun setButtonActions(startAction: () -> Unit, stopAction: () -> Unit) {
