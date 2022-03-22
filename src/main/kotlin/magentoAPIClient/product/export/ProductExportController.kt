@@ -1,65 +1,36 @@
-package magentoAPIClient.product
+package magentoAPIClient.product.export
 
 import magentoAPIClient.*
 import magentoAPIClient.http.HttpHelper
 import magentoAPIClient.http.ProductRequestFactory
 import org.json.JSONObject
-import magentoAPIClient.product.selectionTable.ProductSelectionTableModel
-import magentoAPIClient.product.selectionTable.ProductSelectionTableJFrame
-import magentoAPIClient.product.updateWindow.ProductUpdateController
-import java.awt.EventQueue
 import java.lang.IllegalArgumentException
 import javax.swing.JOptionPane
 
-class ProductController(private val base: BaseController, private val view: ProductComponent) {
+class ProductExportController(private val base: BaseController, private val view: ProductExportComponent) {
 
     companion object {
         private const val PRODUCT_QUERY_PAGE_SIZE: Int = 300
     }
 
     private var config = Configuration()
-    private val productList = mutableListOf<Product>()
-
-    private var productSelectorFrame: ProductSelectionTableJFrame? = null
-    private var productUpdateController: ProductUpdateController = ProductUpdateController(base)
-
+    private val productList = mutableListOf<FullProduct>()
 
     fun initController() {
-        view.addBtnActionHandlers({
+        view.addBtnActionHandlers {
             this.config = base.updateConfigFromGui(this.config)
             queryHandling(base, refreshTimeoutWhileLoading, {
-                queryProducts()
+                queryFullProducts()
             }, {}, {
                 updateInfoLabels()
             })
-        }, {
-            if (productSelectorFrame == null || !productSelectorFrame!!.isVisible) {
-                EventQueue.invokeLater {
-                    val tableModel = ProductSelectionTableModel(productList)
-                    tableModel.addTableModelListener { updateInfoLabels() }
-                    productSelectorFrame = ProductSelectionTableJFrame("Select products", tableModel)
-                    productSelectorFrame!!.initMenu({
-                        productList.forEach { it.selected = true }
-                        tableModel.productListChanged()
-                        updateInfoLabels()
-                    }, {
-                        productList.forEach { it.selected = false }
-                        tableModel.productListChanged()
-                        updateInfoLabels()
-                    })
-                }
-            } else {
-                productSelectorFrame!!.toFront()
-            }
-        }, {
-            productUpdateController.showWindow(productList.filter { it.selected })
-        })
+        }
 
         updateInfoLabels()
     }
 
     private fun updateInfoLabels() {
-        view.updateInfoLabels(productList.size, productList.filter { it.selected }.size)
+        view.updateInfoLabels(productList.size)
     }
 
 
@@ -97,7 +68,7 @@ class ProductController(private val base: BaseController, private val view: Prod
         return totalProductCnt
     }
 
-    private fun queryProducts() {
+    private fun queryFullProducts() {
         productList.clear()
 
         var curPage = 1
@@ -126,13 +97,13 @@ class ProductController(private val base: BaseController, private val view: Prod
         }
     }
 
-    private fun parseProductJsonObject(jsonObject: JSONObject): Product {
-        return Product(
+    private fun parseProductJsonObject(jsonObject: JSONObject): FullProduct {
+        return FullProduct(
             jsonObject.getInt("id"),
-            jsonObject.getString("sku"),
-            jsonObject.getString("name"),
-            jsonObject.getInt("status"),
-            jsonObject.getString("type_id")
+//            jsonObject.getString("sku"),
+//            jsonObject.getString("name"),
+//            jsonObject.getInt("status"),
+//            jsonObject.getString("type_id")
         )
     }
 

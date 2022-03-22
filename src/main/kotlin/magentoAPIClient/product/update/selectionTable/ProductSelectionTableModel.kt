@@ -1,6 +1,6 @@
-package magentoAPIClient.product.selectionTable
+package magentoAPIClient.product.update.selectionTable
 
-import magentoAPIClient.product.Product
+import magentoAPIClient.product.update.Product
 import javax.swing.event.TableModelEvent
 import javax.swing.event.TableModelListener
 import javax.swing.table.TableModel

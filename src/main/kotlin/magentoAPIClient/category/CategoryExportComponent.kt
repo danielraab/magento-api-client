@@ -17,7 +17,7 @@ class CategoryExportComponent : JPanel(), GuiComponentInterface {
     private val categoryListSizeJL = JLabel("0")
     private val saveCategoryListBtn = JButton("save")
 
-    fun createUI() {
+    override fun createUI() {
         rowLayout()
         borderPanelWithTitle("category tree") {
             rowLayout()

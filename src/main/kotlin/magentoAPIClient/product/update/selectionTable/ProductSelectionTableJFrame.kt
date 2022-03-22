@@ -1,4 +1,4 @@
-package magentoAPIClient.product.selectionTable
+package magentoAPIClient.product.update.selectionTable
 
 import magentoAPIClient.*
 import java.awt.Dimension
@@ -10,7 +10,6 @@ import javax.swing.*
 import javax.swing.event.DocumentEvent
 import javax.swing.event.DocumentListener
 import javax.swing.table.TableRowSorter
-import javax.xml.crypto.dsig.spec.DigestMethodParameterSpec
 
 
 class ProductSelectionTableJFrame(title: String, model: ProductSelectionTableModel) : JFrame(title) {

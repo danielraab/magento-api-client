@@ -1,7 +1,7 @@
 package magentoAPIClient
 
 interface GuiComponentInterface {
-
+    fun createUI()
 
     fun updateGuiFromConfig(config: Configuration)
 

@@ -1,9 +1,9 @@
-package magentoAPIClient.product.updateWindow
+package magentoAPIClient.product.update.updateWindow
 
 import magentoAPIClient.*
 import magentoAPIClient.http.HttpHelper
 import magentoAPIClient.http.ProductRequestFactory
-import magentoAPIClient.product.Product
+import magentoAPIClient.product.update.Product
 import org.json.JSONException
 import java.awt.event.WindowEvent
 import java.net.ConnectException

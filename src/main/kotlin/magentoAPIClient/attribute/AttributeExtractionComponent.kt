@@ -19,7 +19,7 @@ class AttributeExtractionComponent : JPanel(), GuiComponentInterface {
     private val saveAttributesWithOptionsJB = JButton("attributes with options")
     private val saveAllJB = JButton("all")
 
-    fun createUI() {
+    override fun createUI() {
         rowLayout()
         borderPanelWithTitle("attributes info") {
             rowLayout()

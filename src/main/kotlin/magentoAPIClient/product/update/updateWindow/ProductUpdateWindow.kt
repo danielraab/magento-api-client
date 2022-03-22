@@ -1,4 +1,4 @@
-package magentoAPIClient.product.updateWindow
+package magentoAPIClient.product.update.updateWindow
 
 import magentoAPIClient.content
 import magentoAPIClient.flowLayoutPanel

@@ -3,6 +3,7 @@ package magentoAPIClient
 import magentoAPIClient.attribute.AttributeExtractionComponent
 import magentoAPIClient.category.CategoryExportComponent
 import magentoAPIClient.product.ProductComponent
+import magentoAPIClient.product.update.ProductUpdateComponent
 import java.awt.*
 import java.awt.event.KeyEvent
 import java.awt.event.WindowEvent
@@ -15,7 +16,7 @@ class BaseWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInterf
 
     val attributeExtractionPanel = AttributeExtractionComponent()
     val categoryExportPanel = CategoryExportComponent()
-    val productUpdaterComponent = ProductComponent()
+    val productComponent = ProductComponent()
 
     private val baseUrlJTF = JTextField()
     private val authJTF = JTextField()
@@ -28,11 +29,11 @@ class BaseWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInterf
     init {
         attributeExtractionPanel.createUI()
         categoryExportPanel.createUI()
-        productUpdaterComponent.createUI()
+        productComponent.createUI()
         tabbedPanel.addTab("Attributes", attributeExtractionPanel)
         tabbedPanel.addTab("Categories", categoryExportPanel)
-        tabbedPanel.addTab("Products", productUpdaterComponent)
-        createUi()
+        tabbedPanel.addTab("Products", productComponent)
+        createUI()
         rootPane.registerKeyboardAction(
             { dispatchEvent(WindowEvent(this@BaseWindow, WindowEvent.WINDOW_CLOSING)) },
             KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
@@ -40,7 +41,7 @@ class BaseWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInterf
         )
     }
 
-    private fun createUi() {
+    override fun createUI() {
         menuBar {
             menu("config") {
                 add(loadConfigMenu)
@@ -101,7 +102,7 @@ class BaseWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInterf
         encodingJCB.selectedItem = config.encoding
         attributeExtractionPanel.updateGuiFromConfig(config)
         categoryExportPanel.updateGuiFromConfig(config)
-        productUpdaterComponent.updateGuiFromConfig(config)
+        productComponent.updateGuiFromConfig(config)
     }
 
     override fun updateConfigFromGui(config: Configuration): Configuration {
@@ -115,14 +116,14 @@ class BaseWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInterf
 
         newConfig = attributeExtractionPanel.updateConfigFromGui(newConfig)
         newConfig = categoryExportPanel.updateConfigFromGui(newConfig)
-        newConfig = productUpdaterComponent.updateConfigFromGui(newConfig)
+        newConfig = productComponent.updateConfigFromGui(newConfig)
         return newConfig
     }
 
     override fun allControlsEnabled(enabled: Boolean) {
         attributeExtractionPanel.allControlsEnabled(enabled)
         categoryExportPanel.allControlsEnabled(enabled)
-        productUpdaterComponent.allControlsEnabled(enabled)
+        productComponent.allControlsEnabled(enabled)
     }
 //endregion
 

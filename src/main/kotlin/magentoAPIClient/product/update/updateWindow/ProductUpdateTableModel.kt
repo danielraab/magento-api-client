@@ -1,13 +1,13 @@
-package magentoAPIClient.product.updateWindow
+package magentoAPIClient.product.update.updateWindow
 
-import magentoAPIClient.product.Product
+import magentoAPIClient.product.update.Product
 import java.lang.IllegalStateException
 import java.net.http.HttpResponse
 import javax.swing.event.TableModelEvent
 import javax.swing.event.TableModelListener
 import javax.swing.table.TableModel
 
-data class UpdateProductEntry(val product:Product, var response:HttpResponse<String>?) {
+data class UpdateProductEntry(val product: Product, var response:HttpResponse<String>?) {
     fun toArray(): List<String> {
         return listOf(product.sku, product.name, (response?.statusCode() ?:"").toString(), response?.body()?:"")
     }

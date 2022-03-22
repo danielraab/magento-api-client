@@ -1,4 +1,4 @@
-package magentoAPIClient.product
+package magentoAPIClient.product.update
 
 import org.json.JSONObject
 
