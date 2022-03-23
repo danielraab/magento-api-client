@@ -11,6 +11,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 import java.lang.IllegalArgumentException
+import java.net.http.HttpResponse
 import javax.swing.JOptionPane
 
 class ProductExportController(private val base: BaseController, private val view: ProductExportComponent) :
@@ -57,18 +58,19 @@ class ProductExportController(private val base: BaseController, private val view
     private fun queryProductWithPagination(currentPage: Int, pageSize: Int): Int {
 
         var totalProductCnt = 0
+        var httpResponse: HttpResponse<String>? = null
 
-        val httpResponse = HttpHelper(
-            ProductRequestFactory.getProductList(
-                config.baseUrl,
-                config.authentication,
-                config.storeView,
-                pageSize,
-                currentPage
-            )
-        ).sendRequest()
+        try {
+            httpResponse = HttpHelper(
+                ProductRequestFactory.getProductList(
+                    config.baseUrl,
+                    config.authentication,
+                    config.storeView,
+                    pageSize,
+                    currentPage
+                )
+            ).sendRequest()
 
-        if (httpResponse.statusCode() == 200) {
             val jsonRoot = httpResponse.body().toJSONObject()
             val prodArr = jsonRoot.getJSONArray("items")
 
@@ -78,9 +80,10 @@ class ProductExportController(private val base: BaseController, private val view
 
             totalProductCnt = jsonRoot.getInt("total_count")
 
-        } else {
-            println("Wrong status code returned: ${httpResponse.statusCode()}")
-            println(httpResponse.body())
+        } catch (_: IOException) {
+        } catch (e: Exception) {
+            println("Wrong status code returned: ${httpResponse?.statusCode()}")
+            println(httpResponse?.body())
             throw IllegalArgumentException()
         }
         return totalProductCnt
@@ -112,13 +115,7 @@ class ProductExportController(private val base: BaseController, private val view
                 "error in reading site",
                 JOptionPane.ERROR_MESSAGE
             )
-        } catch (e: IOException) {  //TODO --- handle io exception on
-            JOptionPane.showMessageDialog(
-                view,
-                "Unable to connect to site.",
-                "error in reading site",
-                JOptionPane.ERROR_MESSAGE
-            )
+        } catch (_: IOException) {
         } catch (e: Exception) {
             e.printStackTrace()
             JOptionPane.showMessageDialog(

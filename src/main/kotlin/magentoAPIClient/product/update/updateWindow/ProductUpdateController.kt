@@ -6,6 +6,7 @@ import magentoAPIClient.http.ProductRequestFactory
 import magentoAPIClient.product.update.Product
 import org.json.JSONException
 import java.awt.event.WindowEvent
+import java.io.IOException
 import java.net.ConnectException
 import javax.swing.JOptionPane
 import javax.swing.SwingWorker
@@ -20,7 +21,7 @@ class ProductUpdateController(val base: BaseController) {
     private var view: ProductUpdateWindow? = null
 
     fun showWindow(productList: List<Product>) {
-        tableEntryList = productList.map { UpdateProductEntry(it, null) }
+        tableEntryList = productList.map { UpdateProductEntry(it) }
 
         //close open window (to reopen with new data)
         view?.dispatchEvent(WindowEvent(view, WindowEvent.WINDOW_CLOSING))
@@ -34,7 +35,7 @@ class ProductUpdateController(val base: BaseController) {
             base.allControlsEnabled(false)
             view!!.isRunning(true)
 
-            tableEntryList.forEach { it.response = null }
+            tableEntryList.forEach { it.responseCode = ""; it.responseBody = "" }
             updateView()
 
             this.config = base.updateConfigFromGui(this.config)
@@ -55,16 +56,25 @@ class ProductUpdateController(val base: BaseController) {
         override fun doInBackground() {
             try {
                 controller.tableEntryList.filter { it.product.selected }.forEach {
-                    val httpResponse = HttpHelper(
-                        ProductRequestFactory.updateProduct(
-                            controller.config.baseUrl,
-                            controller.config.authentication,
-                            controller.config.storeView,
-                            it.product.sku,
-                            controller.config.productAttributeUpdateList
-                        )
-                    ).sendRequest()
-                    it.response = httpResponse
+                    try {
+                        val httpResponse = HttpHelper(
+                            ProductRequestFactory.updateProduct(
+                                controller.config.baseUrl,
+                                controller.config.authentication,
+                                controller.config.storeView,
+                                it.product.sku,
+                                controller.config.productAttributeUpdateList
+                            )
+                        ).sendRequest()
+                        it.responseCode = httpResponse.statusCode().toString()
+                        it.responseBody = httpResponse.body()
+                    } catch (_: IOException) {
+                    } catch (e: Exception) {
+                        it.responseCode = "error"
+                        it.responseBody = e.message.toString()
+                        println("error in updating occurred:")
+                        e.printStackTrace()
+                    }
                     publish(it)
                 }
             } catch (e: JSONException) {
@@ -102,7 +112,7 @@ class ProductUpdateController(val base: BaseController) {
         override fun done() {
             controller.base.allControlsEnabled(true)
             controller.view?.isRunning(false)
-            if(!isCancelled)
+            if (!isCancelled)
                 JOptionPane.showMessageDialog(
                     controller.view,
                     "Update process has finished."
@@ -112,6 +122,6 @@ class ProductUpdateController(val base: BaseController) {
 
     private fun updateView() {
         tableModel.triggerTableModelListener()
-        view?.updateProgressBar(tableEntryList.size, tableEntryList.count { it.response != null })
+        view?.updateProgressBar(tableEntryList.size, tableEntryList.count { it.responseCode.isNotEmpty() })
     }
 }

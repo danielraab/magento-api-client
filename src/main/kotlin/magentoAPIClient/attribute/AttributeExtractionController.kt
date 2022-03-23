@@ -7,6 +7,7 @@ import magentoAPIClient.http.ProductRequestFactory
 import org.json.JSONArray
 import org.json.JSONObject
 import java.awt.Component
+import java.io.IOException
 import javax.swing.JOptionPane
 
 class AttributeExtractionController(private val base: BaseController, private val view: AttributeExtractionComponent): GuiControllerInterface {
@@ -49,6 +50,7 @@ class AttributeExtractionController(private val base: BaseController, private va
             queryAllAttributes()
             queryAttributeFromSets()
 
+        } catch (_: IOException) {
         } catch (e: Exception) {
             println("unable to query given url")
             JOptionPane.showMessageDialog(view, "unable to query given url.", "error in query url", JOptionPane.ERROR_MESSAGE)

@@ -50,7 +50,7 @@ class ProductUpdateComponent : JPanel(), GuiComponentInterface {
     }
 
     override fun updateGuiFromConfig(config: Configuration) {
-        if(config.productAttributeUpdateList.isNotEmpty()) {
+        if (config.productAttributeUpdateList.isNotEmpty()) {
             val singleUpdateData = config.productAttributeUpdateList[0]
             attrTypeJCB.selectedItem = singleUpdateData.type
             attrValueTypeJCB.selectedItem = singleUpdateData.valueType
@@ -59,13 +59,12 @@ class ProductUpdateComponent : JPanel(), GuiComponentInterface {
         }
     }
 
-    private fun getProductAttributeUpdateData(): ProductAttributeUpdate {
-        return ProductAttributeUpdate(attrTypeJCB.selectedItem as ProductAttributeType,
-            attrValueTypeJCB.selectedItem as ProductAttributeValueType,
-            attrKeyJTF.text,
-            attrValueJTF.text
-        )
-    }
+    private fun getProductAttributeUpdateData() = ProductAttributeUpdate(
+        attrTypeJCB.selectedItem as ProductAttributeType,
+        attrValueTypeJCB.selectedItem as ProductAttributeValueType,
+        attrKeyJTF.text.trim(),
+        attrValueJTF.text
+    )
 
     override fun updateConfigFromGui(config: Configuration): Configuration {
         config.productAttributeUpdateList.clear()
@@ -80,7 +79,7 @@ class ProductUpdateComponent : JPanel(), GuiComponentInterface {
     }
 
 
-    fun updateInfoLabels(productListCnt: Int = -1, selectedProductCnt:Int = -1) {
+    fun updateInfoLabels(productListCnt: Int = -1, selectedProductCnt: Int = -1) {
         if (productListCnt >= 0) productListSizeJL.text = productListCnt.toString()
         if (selectedProductCnt >= 0) selectProductsCntJL.text = selectedProductCnt.toString()
         updateProductsBtn.isEnabled = selectedProductCnt > 0
@@ -89,7 +88,7 @@ class ProductUpdateComponent : JPanel(), GuiComponentInterface {
     fun addBtnActionHandlers(
         queryProductsAction: () -> Unit,
         selectProductsAction: () -> Unit,
-        updateProductsAction: ()->Unit
+        updateProductsAction: () -> Unit
     ) {
         queryProductsBtn.addActionListener { queryProductsAction() }
         selectProductsBtn.addActionListener { selectProductsAction() }

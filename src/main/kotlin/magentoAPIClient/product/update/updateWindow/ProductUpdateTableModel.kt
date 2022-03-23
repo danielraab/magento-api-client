@@ -7,9 +7,9 @@ import javax.swing.event.TableModelEvent
 import javax.swing.event.TableModelListener
 import javax.swing.table.TableModel
 
-data class UpdateProductEntry(val product: Product, var response:HttpResponse<String>?) {
+data class UpdateProductEntry(val product: Product, var responseCode:String="", var responseBody:String="") {
     fun toArray(): List<String> {
-        return listOf(product.sku, product.name, (response?.statusCode() ?:"").toString(), response?.body()?:"")
+        return listOf(product.sku, product.name, responseCode, responseBody)
     }
     companion object {
         const val COLUMN_RESPONSE_CODE_IDX = 2

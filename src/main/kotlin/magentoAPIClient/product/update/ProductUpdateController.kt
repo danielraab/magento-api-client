@@ -8,10 +8,13 @@ import magentoAPIClient.product.update.selectionTable.ProductSelectionTableModel
 import magentoAPIClient.product.update.selectionTable.ProductSelectionTableJFrame
 import magentoAPIClient.product.update.updateWindow.ProductUpdateController
 import java.awt.EventQueue
+import java.io.IOException
 import java.lang.IllegalArgumentException
+import java.net.http.HttpResponse
 import javax.swing.JOptionPane
 
-class ProductUpdateController(private val base: BaseController, private val view: ProductUpdateComponent): GuiControllerInterface {
+class ProductUpdateController(private val base: BaseController, private val view: ProductUpdateComponent) :
+    GuiControllerInterface {
 
     companion object {
         private const val PRODUCT_QUERY_PAGE_SIZE: Int = 300
@@ -69,17 +72,18 @@ class ProductUpdateController(private val base: BaseController, private val view
 
         var totalProductCnt = 0
 
-        val httpResponse = HttpHelper(
-            ProductRequestFactory.getProductList(
-                config.baseUrl,
-                config.authentication,
-                config.storeView,
-                pageSize,
-                currentPage
-            )
-        ).sendRequest()
+        var httpResponse: HttpResponse<String>? = null
+        try {
+            httpResponse = HttpHelper(
+                ProductRequestFactory.getProductList(
+                    config.baseUrl,
+                    config.authentication,
+                    config.storeView,
+                    pageSize,
+                    currentPage
+                )
+            ).sendRequest()
 
-        if (httpResponse.statusCode() == 200) {
             val jsonRoot = httpResponse.body().toJSONObject()
             val prodArr = jsonRoot.getJSONArray("items")
 
@@ -89,9 +93,10 @@ class ProductUpdateController(private val base: BaseController, private val view
 
             totalProductCnt = jsonRoot.getInt("total_count")
 
-        } else {
-            println("Wrong status code returned: ${httpResponse.statusCode()}")
-            println(httpResponse.body())
+        } catch (_: IOException) {
+        } catch (e: Exception) {
+            println("Wrong status code returned: ${httpResponse?.statusCode()}")
+            println(httpResponse?.body())
             throw IllegalArgumentException()
         }
         return totalProductCnt
@@ -107,7 +112,7 @@ class ProductUpdateController(private val base: BaseController, private val view
                 curPage++
                 totalCnt = queryProductWithPagination(curPage, PRODUCT_QUERY_PAGE_SIZE)
             }
-            if(totalCnt != productList.size) {
+            if (totalCnt != productList.size) {
 
                 JOptionPane.showMessageDialog(
                     view,

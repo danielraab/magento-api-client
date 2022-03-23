@@ -5,6 +5,7 @@ import magentoAPIClient.flowLayoutPanel
 import magentoAPIClient.rowLayout
 import java.awt.Color
 import java.awt.Component
+import java.awt.Dimension
 import java.awt.Toolkit
 import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
@@ -113,6 +114,7 @@ class ProductUpdateWindow(private val productUpdateModel: ProductUpdateTableMode
                     add(updateJProg)
                     add(startJBtn)
                     add(stopJBtn)
+                    maximumSize = Dimension(Int.MAX_VALUE, 20)
                 }
             }
         }

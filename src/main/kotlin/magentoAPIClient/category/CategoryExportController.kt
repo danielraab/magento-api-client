@@ -6,9 +6,12 @@ import magentoAPIClient.http.HttpHelper
 import org.json.JSONArray
 import org.json.JSONObject
 import java.awt.Component
+import java.io.IOException
+import java.net.http.HttpResponse
 import javax.swing.JOptionPane
 
-class CategoryExportController(private val base: BaseController, private val view: CategoryExportComponent): GuiControllerInterface {
+class CategoryExportController(private val base: BaseController, private val view: CategoryExportComponent) :
+    GuiControllerInterface {
 
     private var config = Configuration()
 
@@ -27,7 +30,7 @@ class CategoryExportController(private val base: BaseController, private val vie
 
         }, {
             this.config = base.updateConfigFromGui(this.config)
-           saveCategoryTreeToCSV(view)
+            saveCategoryTreeToCSV(view)
         }, {
             queryHandling(base, refreshTimeoutWhileLoading, {
                 this.config = base.updateConfigFromGui(this.config)
@@ -49,9 +52,11 @@ class CategoryExportController(private val base: BaseController, private val vie
 
     private fun queryCategoryTree() {
 
-        val result =
-            HttpHelper(CategoryRequestFactory.categoryTree(config.baseUrl, config.authentication)).sendRequest()
-        if(result.statusCode() == 200) {
+        var result: HttpResponse<String>? = null
+        try {
+            result =
+                HttpHelper(CategoryRequestFactory.categoryTree(config.baseUrl, config.authentication)).sendRequest()
+
             val jsonRoot = result.body().toJSONObject()
 
             treeRootCategory = try {
@@ -61,9 +66,10 @@ class CategoryExportController(private val base: BaseController, private val vie
                 println(jsonRoot)
                 null
             }
-        } else {
+        } catch (_: IOException) {
+        } catch (e: Exception) {
             println("Unable to read site response.")
-            println(result.body())
+            println(result?.body())
             JOptionPane.showMessageDialog(view, "Unable to read site response.")
         }
     }
@@ -89,13 +95,15 @@ class CategoryExportController(private val base: BaseController, private val vie
 
 
     private fun queryCategoryDetailsList() {
-        val httpResponse = HttpHelper(
+        var httpResponse: HttpResponse<String>? = null
+        try {
+            httpResponse = HttpHelper(
                 CategoryRequestFactory.categoryDetailsList(
                     config.baseUrl,
                     config.authentication
                 )
             ).sendRequest()
-        if (httpResponse.statusCode() == 200) {
+
             val jsonRoot = httpResponse.body().toJSONObject()
             val catArr = jsonRoot.getJSONArray("items")
 
@@ -107,9 +115,10 @@ class CategoryExportController(private val base: BaseController, private val vie
                 println("given items are not complete:")
                 println(jsonRoot)
             }
-        } else {
+        } catch (_: IOException) {
+        } catch (e: Exception) {
             println("Unable to read site response.")
-            println(httpResponse.body())
+            println(httpResponse?.body())
             JOptionPane.showMessageDialog(view, "Unable to read site response.")
         }
     }
@@ -145,7 +154,7 @@ class CategoryExportController(private val base: BaseController, private val vie
         }
     }
 
-    private fun createCategoryDetailsListCSV(withHeader: Boolean, withDetails: Boolean):String {
+    private fun createCategoryDetailsListCSV(withHeader: Boolean, withDetails: Boolean): String {
         val lines = mutableListOf<String>()
         if (withHeader) {
             lines.add(
@@ -155,14 +164,11 @@ class CategoryExportController(private val base: BaseController, private val vie
             )
         }
 
-        if(withDetails) lines.addAll(categoryDetailsList.flatMap { it.toCsvString(config.columnSeparator) })
+        if (withDetails) lines.addAll(categoryDetailsList.flatMap { it.toCsvString(config.columnSeparator) })
         else lines.addAll(categoryDetailsList.map { it.basic.toCsvString(config.columnSeparator) })
 
         return lines.joinToString(System.lineSeparator())
     }
-
-
-
 
 
     private fun saveCategoryTreeToCSV(view: CategoryExportComponent) {
