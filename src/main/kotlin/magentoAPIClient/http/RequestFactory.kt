@@ -1,8 +1,8 @@
 package magentoAPIClient.http
 
-import magentoAPIClient.product.update.ProductAttributeType
-import magentoAPIClient.product.update.ProductAttributeUpdate
-import magentoAPIClient.product.update.ProductAttributeValueType
+import magentoAPIClient.product.ProductAttributeType
+import magentoAPIClient.product.ProductAttributeUpdate
+import magentoAPIClient.product.ProductAttributeValueType
 import org.json.JSONObject
 import org.json.JSONTokener
 

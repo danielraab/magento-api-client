@@ -3,7 +3,7 @@ package magentoAPIClient.product.update.updateWindow
 import magentoAPIClient.*
 import magentoAPIClient.http.HttpHelper
 import magentoAPIClient.http.ProductRequestFactory
-import magentoAPIClient.product.update.Product
+import magentoAPIClient.product.FullProduct
 import org.json.JSONException
 import java.awt.event.WindowEvent
 import java.io.IOException
@@ -20,7 +20,7 @@ class ProductUpdateController(val base: BaseController) {
     private var tableModel: ProductUpdateTableModel = ProductUpdateTableModel(tableEntryList)
     private var view: ProductUpdateWindow? = null
 
-    fun showWindow(productList: List<Product>) {
+    fun showWindow(productList: List<FullProduct>) {
         tableEntryList = productList.map { UpdateProductEntry(it) }
 
         //close open window (to reopen with new data)
@@ -62,7 +62,7 @@ class ProductUpdateController(val base: BaseController) {
                                 controller.config.baseUrl,
                                 controller.config.authentication,
                                 controller.config.storeView,
-                                it.product.sku,
+                                it.product.sku(),
                                 controller.config.productAttributeUpdateList
                             )
                         ).sendRequest()

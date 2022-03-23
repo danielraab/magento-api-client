@@ -1,9 +1,6 @@
 package magentoAPIClient.product
 
-import magentoAPIClient.Configuration
-import magentoAPIClient.GuiComponentInterface
-import magentoAPIClient.content
-import magentoAPIClient.flowLayoutPanel
+import magentoAPIClient.*
 import magentoAPIClient.product.export.ProductExportComponent
 import magentoAPIClient.product.update.ProductUpdateComponent
 import javax.swing.JPanel
@@ -19,9 +16,9 @@ class ProductComponent  : JPanel(), GuiComponentInterface {
 
 
         content {
-            flowLayoutPanel {
-                add(productUpdateComponent)
+            rowLayout {
                 add(productExportComponent)
+                add(productUpdateComponent)
             }
         }
     }

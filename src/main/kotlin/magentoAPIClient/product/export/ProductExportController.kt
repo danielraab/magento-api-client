@@ -1,12 +1,10 @@
 package magentoAPIClient.product.export
 
 import magentoAPIClient.*
-import magentoAPIClient.category.CategoryBasics
-import magentoAPIClient.category.CategoryDetail
-import magentoAPIClient.category.csvHeader
-import magentoAPIClient.category.toCsvString
 import magentoAPIClient.http.HttpHelper
 import magentoAPIClient.http.ProductRequestFactory
+import magentoAPIClient.product.FullProduct
+import magentoAPIClient.product.ProductController
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
@@ -14,7 +12,10 @@ import java.lang.IllegalArgumentException
 import java.net.http.HttpResponse
 import javax.swing.JOptionPane
 
-class ProductExportController(private val base: BaseController, private val view: ProductExportComponent) :
+class ProductExportController(
+    private val base: BaseController,
+    private val productController: ProductController, private val view: ProductExportComponent
+) :
     GuiControllerInterface {
 
     companion object {
@@ -22,7 +23,6 @@ class ProductExportController(private val base: BaseController, private val view
     }
 
     private var config = Configuration()
-    private val productList = mutableListOf<FullProduct>()
 
     override fun initController() {
         view.addBtnActionHandlers({
@@ -34,7 +34,7 @@ class ProductExportController(private val base: BaseController, private val view
             })
         }, {
             this.config = base.updateConfigFromGui(this.config)
-            if (productList.isNotEmpty()) {
+            if (productController.productList.isNotEmpty()) {
                 saveDialogHandler(
                     view,
                     createProductCSVList(true),
@@ -49,7 +49,7 @@ class ProductExportController(private val base: BaseController, private val view
     }
 
     private fun updateInfoLabels() {
-        view.updateInfoLabels(productList.size)
+        view.updateInfoLabels(productController.productList.size)
     }
 
 
@@ -75,22 +75,21 @@ class ProductExportController(private val base: BaseController, private val view
             val prodArr = jsonRoot.getJSONArray("items")
 
             prodArr.forEach {
-                productList.add(parseProductJsonObject(it as JSONObject))
+                productController.productList.add(parseProductJsonObject(it as JSONObject))
             }
 
             totalProductCnt = jsonRoot.getInt("total_count")
 
         } catch (_: IOException) {
         } catch (e: Exception) {
-            println("Wrong status code returned: ${httpResponse?.statusCode()}")
-            println(httpResponse?.body())
+            e.printStackTrace()
             throw IllegalArgumentException()
         }
         return totalProductCnt
     }
 
     private fun queryFullProducts() {
-        productList.clear()
+        productController.productList.clear()
 
         var curPage = 1
         try {
@@ -99,11 +98,11 @@ class ProductExportController(private val base: BaseController, private val view
                 curPage++
                 totalCnt = queryProductWithPagination(curPage, PRODUCT_QUERY_PAGE_SIZE)
             }
-            if (totalCnt != productList.size) {
+            if (totalCnt != productController.productList.size) {
 
                 JOptionPane.showMessageDialog(
                     view,
-                    "There are inconsistencies while reading products. (read ${productList.size} of total $totalCnt)",
+                    "There are inconsistencies while reading products. (read ${productController.productList.size} of total $totalCnt)",
                     "Inconsistent read",
                     JOptionPane.WARNING_MESSAGE
                 )
@@ -158,7 +157,7 @@ class ProductExportController(private val base: BaseController, private val view
             lines.add(FullProduct.csvHeader())
         }
 
-        lines.addAll(productList.flatMap { it.toCsvList() })
+        lines.addAll(productController.productList.flatMap { it.toCsvList() })
 
         return lines.joinToString(System.lineSeparator()) { list -> list.joinToString(config.columnSeparator) { it.toQuoteString() } }
 

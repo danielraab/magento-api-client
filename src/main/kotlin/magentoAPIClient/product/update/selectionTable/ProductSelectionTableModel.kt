@@ -1,12 +1,12 @@
 package magentoAPIClient.product.update.selectionTable
 
-import magentoAPIClient.product.update.Product
+import magentoAPIClient.product.FullProduct
 import javax.swing.event.TableModelEvent
 import javax.swing.event.TableModelListener
 import javax.swing.table.TableModel
 
 
-class ProductSelectionTableModel(private val productList: List<Product>) : TableModel {
+class ProductSelectionTableModel(private val productList: List<FullProduct>) : TableModel {
 
     private val listenerList = mutableListOf<TableModelListener>()
 
@@ -19,19 +19,19 @@ class ProductSelectionTableModel(private val productList: List<Product>) : Table
     }
 
     override fun getColumnCount(): Int {
-        return Product.getColumns().size
+        return FullProduct.getColumns().size
     }
 
     override fun getColumnName(columnIndex: Int): String {
-        return Product.getColumns()[columnIndex]
+        return FullProduct.getColumns()[columnIndex]
     }
 
     override fun getColumnClass(columnIndex: Int): Class<*> {
-        return Product.getColumnsClass()[columnIndex]
+        return FullProduct.getColumnsClass()[columnIndex]
     }
 
     override fun isCellEditable(rowIndex: Int, columnIndex: Int): Boolean {
-        return Product.editableColumnArray()[columnIndex]
+        return FullProduct.editableColumnArray()[columnIndex]
     }
 
     override fun getValueAt(rowIndex: Int, columnIndex: Int): Any {
@@ -44,9 +44,9 @@ class ProductSelectionTableModel(private val productList: List<Product>) : Table
     }
 
     fun toggleSelection(rowIndex: Int) {
-        val curSel = getValueAt(rowIndex, Product.SELECTION_COLUMN_INDEX)
+        val curSel = getValueAt(rowIndex, FullProduct.SELECTION_COLUMN_INDEX)
         if (curSel is Boolean) {
-            productList[rowIndex].updateColumn(Product.SELECTION_COLUMN_INDEX, !curSel)
+            productList[rowIndex].updateColumn(FullProduct.SELECTION_COLUMN_INDEX, !curSel)
             notifyListeners(rowIndex)
         }
     }

@@ -1,24 +1,18 @@
-package magentoAPIClient.product.update
+package magentoAPIClient.product
 
 import org.json.JSONObject
 
-
-data class Product(
+data class FullProduct(
     val id: Int,
-    val sku: String,
-    val name: String,
-    val status: Int,
-    val type: String,
-    var selected: Boolean = false
+    val simpleAttrMap: MutableMap<String, Any> = mutableMapOf(),
+    val customAttrMap: MutableMap<String, Any> = mutableMapOf(),
+    val extAttrMap: MutableMap<String, Any> = mutableMapOf()
 ) {
-
-    fun updateColumn(columnIndex: Int, aValue: Any?) {
-        if (columnIndex == SELECTION_COLUMN_INDEX && aValue is Boolean) {
-            selected = aValue
-        }
-    }
-
-    fun toArray() = arrayOf(selected, id, sku, name, status, type)
+    var selected: Boolean = false
+    fun sku() = simpleAttrMap["sku"] as String
+    fun name() = simpleAttrMap["name"] as String
+    fun status() = simpleAttrMap["status"] as Int   //TODO change to property
+    fun type() = simpleAttrMap["type_id"] as String
 
     companion object {
         const val SELECTION_COLUMN_INDEX = 0
@@ -33,7 +27,17 @@ data class Product(
             String::class.javaObjectType
         )
     }
+
+    fun updateColumn(columnIndex: Int, aValue: Any?) {
+        if (columnIndex == SELECTION_COLUMN_INDEX && aValue is Boolean) {
+            selected = aValue
+        }
+    }
+
+    fun toArray() = arrayOf(selected, id, sku(), name(), status(), type())
+
 }
+
 
 enum class ProductAttributeType(val typeKey: String) {
     BASIC(""),

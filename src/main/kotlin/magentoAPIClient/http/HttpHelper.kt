@@ -35,7 +35,7 @@ class HttpHelper(private val requestInfo: RequestInfo) {
             return client.send(requestBuilder.build(), HttpResponse.BodyHandlers.ofString())
         } catch (ioe:IOException) {
             ioe.printStackTrace()
-            if(showMessagePaneOnError) {
+            if(showMessagePaneOnError) {    //TODO remove message pane again, no view action in helper
                 JOptionPane.showMessageDialog(
                     null,
                     "Unable to connect to site.",

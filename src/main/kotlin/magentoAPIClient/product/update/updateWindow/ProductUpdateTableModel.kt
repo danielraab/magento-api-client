@@ -1,15 +1,14 @@
 package magentoAPIClient.product.update.updateWindow
 
-import magentoAPIClient.product.update.Product
+import magentoAPIClient.product.FullProduct
 import java.lang.IllegalStateException
-import java.net.http.HttpResponse
 import javax.swing.event.TableModelEvent
 import javax.swing.event.TableModelListener
 import javax.swing.table.TableModel
 
-data class UpdateProductEntry(val product: Product, var responseCode:String="", var responseBody:String="") {
+data class UpdateProductEntry(val product: FullProduct, var responseCode:String="", var responseBody:String="") {
     fun toArray(): List<String> {
-        return listOf(product.sku, product.name, responseCode, responseBody)
+        return listOf(product.sku(), product.name(), responseCode, responseBody)
     }
     companion object {
         const val COLUMN_RESPONSE_CODE_IDX = 2

@@ -1,13 +1,14 @@
 package magentoAPIClient.product.update
 
 import magentoAPIClient.*
+import magentoAPIClient.product.ProductAttributeType
+import magentoAPIClient.product.ProductAttributeUpdate
+import magentoAPIClient.product.ProductAttributeValueType
 import java.awt.Label
 import javax.swing.*
 
 class ProductUpdateComponent : JPanel(), GuiComponentInterface {
 
-    private val queryProductsBtn = JButton("query")
-    private val productListSizeJL = JLabel("0")
     private val selectProductsBtn = JButton("select Products")
     private val selectProductsCntJL = JLabel("0")
 
@@ -19,16 +20,7 @@ class ProductUpdateComponent : JPanel(), GuiComponentInterface {
 
 
     override fun createUI() {
-        borderPanelWithTitle("update products") {
-            rowLayout()
-            borderPanelWithTitle("load products") {
-                rowLayout()
-                flowLayoutPanel {
-                    add(queryProductsBtn)
-                    add(Label("products cnt:"))
-                    add(productListSizeJL)
-                }
-            }
+
             borderPanelWithTitle("update products:") {
                 rowLayout()
                 flowLayoutPanel {
@@ -46,7 +38,6 @@ class ProductUpdateComponent : JPanel(), GuiComponentInterface {
                     add(updateProductsBtn)
                 }
             }
-        }
     }
 
     override fun updateGuiFromConfig(config: Configuration) {
@@ -59,7 +50,7 @@ class ProductUpdateComponent : JPanel(), GuiComponentInterface {
         }
     }
 
-    private fun getProductAttributeUpdateData() = ProductAttributeUpdate(
+    private fun getProductAttributeUpdateData() = ProductAttributeUpdate (
         attrTypeJCB.selectedItem as ProductAttributeType,
         attrValueTypeJCB.selectedItem as ProductAttributeValueType,
         attrKeyJTF.text.trim(),
@@ -73,24 +64,20 @@ class ProductUpdateComponent : JPanel(), GuiComponentInterface {
     }
 
     override fun allControlsEnabled(enabled: Boolean) {
-        queryProductsBtn.isEnabled = enabled
         selectProductsBtn.isEnabled = enabled
         updateProductsBtn.isEnabled = enabled
     }
 
 
-    fun updateInfoLabels(productListCnt: Int = -1, selectedProductCnt: Int = -1) {
-        if (productListCnt >= 0) productListSizeJL.text = productListCnt.toString()
+    fun updateInfoLabels(selectedProductCnt: Int = -1) {
         if (selectedProductCnt >= 0) selectProductsCntJL.text = selectedProductCnt.toString()
         updateProductsBtn.isEnabled = selectedProductCnt > 0
     }
 
     fun addBtnActionHandlers(
-        queryProductsAction: () -> Unit,
         selectProductsAction: () -> Unit,
         updateProductsAction: () -> Unit
     ) {
-        queryProductsBtn.addActionListener { queryProductsAction() }
         selectProductsBtn.addActionListener { selectProductsAction() }
         updateProductsBtn.addActionListener { updateProductsAction() }
     }

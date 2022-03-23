@@ -1,6 +1,6 @@
 package magentoAPIClient
 
-import magentoAPIClient.product.update.ProductAttributeUpdate
+import magentoAPIClient.product.ProductAttributeUpdate
 import java.nio.charset.Charset
 
 enum class AvailableCharset(val charset:Charset) { ISO_8859_1(Charsets.ISO_8859_1), UTF_8(Charsets.UTF_8)}
