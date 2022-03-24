@@ -9,10 +9,14 @@ data class FullProduct(
     val extAttrMap: MutableMap<String, Any> = mutableMapOf()
 ) {
     var selected: Boolean = false
-    fun sku() = simpleAttrMap["sku"] as String
-    fun name() = simpleAttrMap["name"] as String
-    fun status() = simpleAttrMap["status"] as Int   //TODO change to property
-    fun type() = simpleAttrMap["type_id"] as String
+    val sku: String
+        get() = simpleAttrMap["sku"] as String
+    val name: String
+        get() = simpleAttrMap["name"] as String
+    val status: Int
+        get() = simpleAttrMap["status"] as Int
+    val type: String
+        get() = simpleAttrMap["type_id"] as String
 
     companion object {
         const val SELECTION_COLUMN_INDEX = 0
@@ -34,7 +38,7 @@ data class FullProduct(
         }
     }
 
-    fun toArray() = arrayOf(selected, id, sku(), name(), status(), type())
+    fun toArray() = arrayOf(selected, id, sku, name, status, type)
 
 }
 

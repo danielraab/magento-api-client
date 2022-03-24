@@ -62,7 +62,7 @@ class ProductUpdateController(val base: BaseController) {
                                 controller.config.baseUrl,
                                 controller.config.authentication,
                                 controller.config.storeView,
-                                it.product.sku(),
+                                it.product.sku,
                                 controller.config.productAttributeUpdateList
                             )
                         ).sendRequest()

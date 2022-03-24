@@ -5,55 +5,53 @@ import magentoAPIClient.borderPanelWithTitle
 import magentoAPIClient.flowLayoutPanel
 import magentoAPIClient.rowLayout
 import magentoAPIClient.Configuration
+import java.awt.Color
 import java.awt.Label
 import javax.swing.*
 
 class AttributeExtractionComponent : JPanel(), GuiComponentInterface {
 
-    private val queryAPIJB = JButton("query")
+    private val queryAPIJB = JButton("query").apply { background = Color.GREEN }
     private val attributeSetCntJL = JLabel("0")
     private val attributeCntJL = JLabel("0")
     private val attributeOptionCntJL = JLabel("0")
-    private val saveAttributeSetsJB = JButton("attribute sets")
-    private val saveAttributesJB = JButton("attributes")
-    private val saveAttributesWithOptionsJB = JButton("attributes with options")
-    private val saveAllJB = JButton("all")
+    private val saveAttributeSetsJB = JButton("attribute sets").apply { background = Color.YELLOW }
+    private val saveAttributesJB = JButton("attributes").apply { background = Color.YELLOW }
+    private val saveAttributesWithOptionsJB = JButton("attributes with options").apply { background = Color.ORANGE }
+    private val saveAllJB = JButton("all").apply { background = Color.RED }
 
     override fun createUI() {
-        rowLayout()
-        borderPanelWithTitle("attributes info") {
-            rowLayout()
-            flowLayoutPanel {
-                add(queryAPIJB)
+        rowLayout {
+            borderPanelWithTitle("attributes info") {
+                rowLayout()
+                flowLayoutPanel {
+                    add(queryAPIJB)
+                }
+                flowLayoutPanel {
+                    add(Label("attribute set cnt:"))
+                    add(attributeSetCntJL)
+                }
+                flowLayoutPanel {
+                    add(Label("attribute cnt:"))
+                    add(attributeCntJL)
+                }
+                flowLayoutPanel {
+                    add(Label("attribute option cnt:"))
+                    add(attributeOptionCntJL)
+                }
             }
-            flowLayoutPanel {
-                add(Label("attribute set cnt:"))
-                add(attributeSetCntJL)
-            }
-            flowLayoutPanel {
-                add(Label("attribute cnt:"))
-                add(attributeCntJL)
-            }
-            flowLayoutPanel {
-                add(Label("attribute option cnt:"))
-                add(attributeOptionCntJL)
+            borderPanelWithTitle("save to CSV") {
+                rowLayout()
+                flowLayoutPanel {
+                    add(saveAttributeSetsJB)
+                    add(saveAttributesJB)
+                }
+                flowLayoutPanel {
+                    add(saveAttributesWithOptionsJB)
+                    add(saveAllJB)
+                }
             }
         }
-        borderPanelWithTitle("save to CSV") {
-            rowLayout()
-            flowLayoutPanel {
-                add(saveAttributeSetsJB)
-            }
-            flowLayoutPanel {
-                add(saveAttributesJB)
-                add(saveAttributesWithOptionsJB)
-            }
-            flowLayoutPanel {
-                add(saveAllJB)
-            }
-        }
-
-
     }
 
     override fun updateGuiFromConfig(config: Configuration) {

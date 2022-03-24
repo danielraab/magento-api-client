@@ -8,7 +8,7 @@ import javax.swing.table.TableModel
 
 data class UpdateProductEntry(val product: FullProduct, var responseCode:String="", var responseBody:String="") {
     fun toArray(): List<String> {
-        return listOf(product.sku(), product.name(), responseCode, responseBody)
+        return listOf(product.sku, product.name, responseCode, responseBody)
     }
     companion object {
         const val COLUMN_RESPONSE_CODE_IDX = 2

@@ -1,14 +1,14 @@
 package magentoAPIClient.product
 
 import magentoAPIClient.*
-import magentoAPIClient.product.export.ProductExportComponent
+import magentoAPIClient.product.export.ProductLoadExportComponent
 import magentoAPIClient.product.update.ProductUpdateComponent
 import javax.swing.JPanel
 
 class ProductComponent  : JPanel(), GuiComponentInterface {
 
     val productUpdateComponent = ProductUpdateComponent()
-    val productExportComponent = ProductExportComponent()
+    val productExportComponent = ProductLoadExportComponent()
 
     override fun createUI() {
         productUpdateComponent.createUI()

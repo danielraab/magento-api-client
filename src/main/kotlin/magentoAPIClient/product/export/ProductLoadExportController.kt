@@ -12,9 +12,9 @@ import java.lang.IllegalArgumentException
 import java.net.http.HttpResponse
 import javax.swing.JOptionPane
 
-class ProductExportController(
+class ProductLoadExportController(
     private val base: BaseController,
-    private val productController: ProductController, private val view: ProductExportComponent
+    private val productController: ProductController, private val view: ProductLoadExportComponent
 ) :
     GuiControllerInterface {
 

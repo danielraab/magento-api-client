@@ -4,40 +4,41 @@ import magentoAPIClient.*
 import magentoAPIClient.product.ProductAttributeType
 import magentoAPIClient.product.ProductAttributeUpdate
 import magentoAPIClient.product.ProductAttributeValueType
+import java.awt.Color
 import java.awt.Label
 import javax.swing.*
 
 class ProductUpdateComponent : JPanel(), GuiComponentInterface {
 
-    private val selectProductsBtn = JButton("select Products")
+    private val selectProductsBtn = JButton("select Products").apply { background = Color.decode("#12c0ff") }
     private val selectProductsCntJL = JLabel("0")
 
     private val attrTypeJCB = JComboBox(ProductAttributeType.values())
     private val attrValueTypeJCB = JComboBox(ProductAttributeValueType.values())
     private val attrKeyJTF = JTextField("key").also { it.columns = 10 }
     private val attrValueJTF = JTextField("value").also { it.columns = 10 }
-    private val updateProductsBtn = JButton("update Products")
+    private val updateProductsBtn = JButton("update Products").apply { background = Color.decode("#ff5c5c")}
 
 
     override fun createUI() {
 
-            borderPanelWithTitle("update products:") {
-                rowLayout()
-                flowLayoutPanel {
-                    add(selectProductsBtn)
-                    add(Label("selected products: "))
-                    add(selectProductsCntJL)
-                }
-                flowLayoutPanel {
-                    add(attrTypeJCB)
-                    add(attrValueTypeJCB)
-                    add(attrKeyJTF)
-                    add(attrValueJTF)
-                }
-                flowLayoutPanel {
-                    add(updateProductsBtn)
-                }
+        borderPanelWithTitle("update products:") {
+            rowLayout()
+            flowLayoutPanel {
+                add(selectProductsBtn)
+                add(Label("selected products: "))
+                add(selectProductsCntJL)
             }
+            flowLayoutPanel {
+                add(attrTypeJCB)
+                add(attrValueTypeJCB)
+                add(attrKeyJTF)
+                add(attrValueJTF)
+            }
+            flowLayoutPanel {
+                add(updateProductsBtn)
+            }
+        }
     }
 
     override fun updateGuiFromConfig(config: Configuration) {
@@ -50,7 +51,7 @@ class ProductUpdateComponent : JPanel(), GuiComponentInterface {
         }
     }
 
-    private fun getProductAttributeUpdateData() = ProductAttributeUpdate (
+    private fun getProductAttributeUpdateData() = ProductAttributeUpdate(
         attrTypeJCB.selectedItem as ProductAttributeType,
         attrValueTypeJCB.selectedItem as ProductAttributeValueType,
         attrKeyJTF.text.trim(),

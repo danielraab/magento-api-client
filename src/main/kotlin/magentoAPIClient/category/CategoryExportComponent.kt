@@ -1,48 +1,44 @@
 package magentoAPIClient.category
 
-import magentoAPIClient.GuiComponentInterface
-import magentoAPIClient.borderPanelWithTitle
-import magentoAPIClient.flowLayoutPanel
-import magentoAPIClient.rowLayout
-import magentoAPIClient.Configuration
+import magentoAPIClient.*
+import java.awt.Color
 import java.awt.Label
 import javax.swing.*
 
 class CategoryExportComponent : JPanel(), GuiComponentInterface {
 
-    private val queryCategoryTreeBtn = JButton("query")
+    private val queryCategoryTreeBtn = JButton("query").apply { background = Color.GREEN }
     private val categoryTreeSizeJL = JLabel("0")
-    private val saveCategoryTreeBtn = JButton("save")
-    private val queryCategoryListBtn = JButton("query")
+    private val saveCategoryTreeBtn = JButton("export CSV").apply { background = Color.ORANGE }
+    private val queryCategoryListBtn = JButton("query").apply { background = Color.GREEN }
     private val categoryListSizeJL = JLabel("0")
-    private val saveCategoryListBtn = JButton("save")
+    private val saveCategoryListBtn = JButton("export CSV").apply { background = Color.ORANGE }
 
     override fun createUI() {
-        rowLayout()
-        borderPanelWithTitle("category tree") {
-            rowLayout()
-            flowLayoutPanel {
-                add(queryCategoryTreeBtn)
-            }
-            flowLayoutPanel {
-                add(Label("categories in tree:"))
-                add(categoryTreeSizeJL)
-            }
-            flowLayoutPanel {
-                add(saveCategoryTreeBtn)
-            }
-        }
-        borderPanelWithTitle("category details") {
-            rowLayout()
-            flowLayoutPanel {
-                add(queryCategoryListBtn)
-            }
-            flowLayoutPanel {
-                add(Label("categories in list:"))
-                add(categoryListSizeJL)
-            }
-            flowLayoutPanel {
-                add(saveCategoryListBtn)
+        content {
+            rowLayout {
+                borderPanelWithTitle("category tree") {
+                    rowLayout()
+                    flowLayoutPanel {
+                        add(queryCategoryTreeBtn)
+                        flowLayoutPanel {
+                            add(Label("categories in tree:"))
+                            add(categoryTreeSizeJL)
+                        }
+                        add(saveCategoryTreeBtn)
+                    }
+                }
+                borderPanelWithTitle("category details") {
+                    rowLayout()
+                    flowLayoutPanel {
+                        add(queryCategoryListBtn)
+                        flowLayoutPanel {
+                            add(Label("categories in list:"))
+                            add(categoryListSizeJL)
+                        }
+                        add(saveCategoryListBtn)
+                    }
+                }
             }
         }
     }
