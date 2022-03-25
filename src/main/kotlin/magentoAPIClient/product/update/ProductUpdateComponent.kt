@@ -10,14 +10,14 @@ import javax.swing.*
 
 class ProductUpdateComponent : JPanel(), GuiComponentInterface {
 
-    private val selectProductsBtn = JButton("select Products").apply { background = Color.decode("#12c0ff") }
+    private val selectProductsBtn = JButton("select Products").apply { background = OPEN_WINDOW_BTN}
     private val selectProductsCntJL = JLabel("0")
 
     private val attrTypeJCB = JComboBox(ProductAttributeType.values())
     private val attrValueTypeJCB = JComboBox(ProductAttributeValueType.values())
     private val attrKeyJTF = JTextField("key").also { it.columns = 10 }
     private val attrValueJTF = JTextField("value").also { it.columns = 10 }
-    private val updateProductsBtn = JButton("update Products").apply { background = Color.decode("#ff5c5c")}
+    private val updateProductsBtn = JButton("update Products").apply { background = OPEN_WINDOW_BTN}
 
 
     override fun createUI() {

@@ -1,4 +1,4 @@
-package magentoAPIClient.product.update.selectionTable
+package magentoAPIClient.product.update.selectionWindow
 
 import magentoAPIClient.product.FullProduct
 import javax.swing.event.TableModelEvent

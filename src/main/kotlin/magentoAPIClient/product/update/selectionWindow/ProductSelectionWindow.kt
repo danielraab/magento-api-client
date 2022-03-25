@@ -1,4 +1,4 @@
-package magentoAPIClient.product.update.selectionTable
+package magentoAPIClient.product.update.selectionWindow
 
 import magentoAPIClient.*
 import java.awt.Dimension
@@ -12,7 +12,7 @@ import javax.swing.event.DocumentListener
 import javax.swing.table.TableRowSorter
 
 
-class ProductSelectionTableJFrame(title: String, model: ProductSelectionTableModel) : JFrame(title) {
+class ProductSelectionWindow(title: String, model: ProductSelectionTableModel) : JFrame(title) {
 
     private val selectAllMenu = JMenuItem("select all")
     private val unselectAllMenu = JMenuItem("unselect all")
@@ -25,7 +25,7 @@ class ProductSelectionTableJFrame(title: String, model: ProductSelectionTableMod
         createUi()
 
         rootPane.registerKeyboardAction(
-            { dispatchEvent(WindowEvent(this@ProductSelectionTableJFrame, WindowEvent.WINDOW_CLOSING)) },
+            { dispatchEvent(WindowEvent(this@ProductSelectionWindow, WindowEvent.WINDOW_CLOSING)) },
             KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
             JComponent.WHEN_IN_FOCUSED_WINDOW
         )

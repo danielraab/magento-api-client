@@ -1,12 +1,7 @@
 package magentoAPIClient.product.update.updateWindow
 
-import magentoAPIClient.content
-import magentoAPIClient.flowLayoutPanel
-import magentoAPIClient.rowLayout
-import java.awt.Color
-import java.awt.Component
-import java.awt.Dimension
-import java.awt.Toolkit
+import magentoAPIClient.*
+import java.awt.*
 import java.awt.datatransfer.StringSelection
 import java.awt.event.KeyEvent
 import java.awt.event.MouseAdapter
@@ -16,17 +11,21 @@ import javax.swing.*
 import javax.swing.table.DefaultTableCellRenderer
 
 
-class ProductUpdateWindow(private val productUpdateModel: ProductUpdateTableModel) : JFrame() {
+class ProductUpdateWindow(private val productUpdateModel: ProductUpdateTableModel, config: Configuration) : JFrame() {
 
     private val productUpdateTable = JTable(productUpdateModel)
 
+    private val targetUrlJLabel = JLabel(config.baseUrl)
+    private val targetStoreViewJLabel = JLabel(config.storeView)
+
     private val updateJProg = JProgressBar()
-    private val startJBtn = JButton("start")
+    private val startJBtn = JButton("start").apply { background = UPDATE_BTN }
     private val stopJBtn = JButton("stop")
 
     init {
         createUi()
 
+        //close with ESC Button
         rootPane.registerKeyboardAction(
             { dispatchEvent(WindowEvent(this@ProductUpdateWindow, WindowEvent.WINDOW_CLOSING)) },
             KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
@@ -72,12 +71,10 @@ class ProductUpdateWindow(private val productUpdateModel: ProductUpdateTableMode
             ): Component {
                 val l = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column) as JLabel
 
-                if (value.toString().startsWith("2")) {
-                    l.background = Color.GREEN
-                } else if (value.toString().isNotEmpty()) {
-                    l.background = Color.RED
-                } else {
-                    l.background = Color.LIGHT_GRAY
+                when ((productUpdateTable.model as ProductUpdateTableModel).getStatusAt(row)) {
+                    UpdateStatus.SUCCESS -> l.background = Color.GREEN
+                    UpdateStatus.FAILED -> l.background = Color.RED
+                    UpdateStatus.NONE -> l.background = Color.LIGHT_GRAY
                 }
                 return l
             }
@@ -110,25 +107,38 @@ class ProductUpdateWindow(private val productUpdateModel: ProductUpdateTableMode
             rowLayout {
                 add(JScrollPane(productUpdateTable))
 
-                flowLayoutPanel {
-                    add(updateJProg)
-                    add(startJBtn)
-                    add(stopJBtn)
+                rowLayout {
+                    flowLayoutPanel {
+                        add(Label("Target url:"))
+                        add(targetUrlJLabel)
+                        add(Label("store view:"))
+                        add(targetStoreViewJLabel)
+                    }
+                    flowLayoutPanel {
+                        add(updateJProg)
+                        add(startJBtn)
+                        add(stopJBtn)
+                    }
                     maximumSize = Dimension(Int.MAX_VALUE, 20)
                 }
             }
         }
     }
 
-    fun updateProgressBar(max:Int, value:Int) {
+    fun updateView(progressMax: Int, progressValue: Int, isUpdating: Boolean) {
+        updateProgressBar(progressMax, progressValue)
+        isUpdating(isUpdating)
+    }
+
+    private fun updateProgressBar(max: Int, value: Int) {
         updateJProg.minimum = 0
         updateJProg.maximum = max
         updateJProg.value = value
         updateJProg.string = "$value/$max"
     }
 
-    fun isRunning(running: Boolean) {
-        startJBtn.isEnabled = !running
-        stopJBtn.isEnabled = running
+    private fun isUpdating(updating: Boolean) {
+        startJBtn.isEnabled = !updating
+        stopJBtn.isEnabled = updating
     }
 }

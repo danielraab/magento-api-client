@@ -7,12 +7,12 @@ import javax.swing.*
 
 class CategoryExportComponent : JPanel(), GuiComponentInterface {
 
-    private val queryCategoryTreeBtn = JButton("query").apply { background = Color.GREEN }
+    private val queryCategoryTreeBtn = JButton("query").apply { background = QUERY_BTN }
     private val categoryTreeSizeJL = JLabel("0")
-    private val saveCategoryTreeBtn = JButton("export CSV").apply { background = Color.ORANGE }
-    private val queryCategoryListBtn = JButton("query").apply { background = Color.GREEN }
+    private val saveCategoryTreeBtn = JButton("export CSV").apply { background = EXPORT_BTN }
+    private val queryCategoryListBtn = JButton("query").apply { background = QUERY_BTN }
     private val categoryListSizeJL = JLabel("0")
-    private val saveCategoryListBtn = JButton("export CSV").apply { background = Color.ORANGE }
+    private val saveCategoryListBtn = JButton("export CSV").apply { background = EXPORT_BTN }
 
     override fun createUI() {
         content {

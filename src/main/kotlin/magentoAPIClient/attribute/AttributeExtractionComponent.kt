@@ -1,24 +1,20 @@
 package magentoAPIClient.attribute
 
-import magentoAPIClient.GuiComponentInterface
-import magentoAPIClient.borderPanelWithTitle
-import magentoAPIClient.flowLayoutPanel
-import magentoAPIClient.rowLayout
-import magentoAPIClient.Configuration
+import magentoAPIClient.*
 import java.awt.Color
 import java.awt.Label
 import javax.swing.*
 
 class AttributeExtractionComponent : JPanel(), GuiComponentInterface {
 
-    private val queryAPIJB = JButton("query").apply { background = Color.GREEN }
+    private val queryAPIJB = JButton("query").apply { background = QUERY_BTN }
     private val attributeSetCntJL = JLabel("0")
     private val attributeCntJL = JLabel("0")
     private val attributeOptionCntJL = JLabel("0")
-    private val saveAttributeSetsJB = JButton("attribute sets").apply { background = Color.YELLOW }
-    private val saveAttributesJB = JButton("attributes").apply { background = Color.YELLOW }
-    private val saveAttributesWithOptionsJB = JButton("attributes with options").apply { background = Color.ORANGE }
-    private val saveAllJB = JButton("all").apply { background = Color.RED }
+    private val saveAttributeSetsJB = JButton("attribute sets").apply { background = EXPORT_LIGHT_BTN }
+    private val saveAttributesJB = JButton("attributes").apply { background = EXPORT_LIGHT_BTN }
+    private val saveAttributesWithOptionsJB = JButton("attributes with options").apply { background = EXPORT_BTN }
+    private val saveAllJB = JButton("all").apply { background = EXPORT_BTN }
 
     override fun createUI() {
         rowLayout {

@@ -28,20 +28,19 @@ class ProductUpdateController(val base: BaseController) {
 
 
         tableModel = ProductUpdateTableModel(tableEntryList)
-        view = ProductUpdateWindow(tableModel)
-        view!!.isRunning(false)
+        config = base.updateConfigFromGui(config)
+        view = ProductUpdateWindow(tableModel, config)
 
         view!!.setButtonActions({
-            base.allControlsEnabled(false)
-            view!!.isRunning(true)
+            if (updateWorker == null || updateWorker!!.isDone) {
+                base.allControlsEnabled(false)
 
-            tableEntryList.forEach { it.responseCode = ""; it.responseBody = "" }
-            updateView()
+//            tableEntryList.forEach { it.status=UpdateStatus.NONE it.responseCode = ""; it.responseBody = "" }     //to clear possible runs
 
-            this.config = base.updateConfigFromGui(this.config)
-
-            updateWorker = UpdateProductsWorker(this)
-            updateWorker!!.execute()
+                updateWorker = UpdateProductsWorker(this)
+                updateWorker!!.execute()
+                updateView()
+            }
         }, {
             updateWorker?.cancel(true)
         })
@@ -55,7 +54,7 @@ class ProductUpdateController(val base: BaseController) {
 
         override fun doInBackground() {
             try {
-                controller.tableEntryList.filter { it.product.selected }.forEach {
+                controller.tableEntryList.filter { it.product.selected && it.status != UpdateStatus.SUCCESS }.forEach {
                     try {
                         val httpResponse = HttpHelper(
                             ProductRequestFactory.updateProduct(
@@ -66,10 +65,14 @@ class ProductUpdateController(val base: BaseController) {
                                 controller.config.productAttributeUpdateList
                             )
                         ).sendRequest()
+                        it.status = UpdateStatus.SUCCESS
                         it.responseCode = httpResponse.statusCode().toString()
                         it.responseBody = httpResponse.body()
                     } catch (_: IOException) {
+                    } catch (ie: InterruptedException) {
+                        throw ie
                     } catch (e: Exception) {
+                        it.status = UpdateStatus.FAILED
                         it.responseCode = "error"
                         it.responseBody = e.message.toString()
                         println("error in updating occurred:")
@@ -89,6 +92,7 @@ class ProductUpdateController(val base: BaseController) {
                     controller.view,
                     "Update process was cancelled by the user."
                 )
+                throw e
             } catch (e: ConnectException) {
                 JOptionPane.showMessageDialog(
                     controller.view,
@@ -111,7 +115,7 @@ class ProductUpdateController(val base: BaseController) {
 
         override fun done() {
             controller.base.allControlsEnabled(true)
-            controller.view?.isRunning(false)
+            controller.updateView()
             if (!isCancelled)
                 JOptionPane.showMessageDialog(
                     controller.view,
@@ -120,8 +124,12 @@ class ProductUpdateController(val base: BaseController) {
         }
     }
 
-    private fun updateView() {
+    fun updateView() {
         tableModel.triggerTableModelListener()
-        view?.updateProgressBar(tableEntryList.size, tableEntryList.count { it.responseCode.isNotEmpty() })
+        view?.updateView(
+            tableEntryList.size,
+            tableEntryList.count { it.status != UpdateStatus.NONE },
+            updateWorker != null && !updateWorker!!.isDone
+        )
     }
 }

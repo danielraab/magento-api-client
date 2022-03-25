@@ -6,10 +6,18 @@ import javax.swing.event.TableModelEvent
 import javax.swing.event.TableModelListener
 import javax.swing.table.TableModel
 
-data class UpdateProductEntry(val product: FullProduct, var responseCode:String="", var responseBody:String="") {
+enum class UpdateStatus {SUCCESS, FAILED, NONE}
+
+data class UpdateProductEntry(
+    val product: FullProduct,
+    var status: UpdateStatus = UpdateStatus.NONE,
+    var responseCode: String = "",
+    var responseBody: String = ""
+) {
     fun toArray(): List<String> {
         return listOf(product.sku, product.name, responseCode, responseBody)
     }
+
     companion object {
         const val COLUMN_RESPONSE_CODE_IDX = 2
         const val COLUMN_RESPONSE_BODY_IDX = 3
@@ -45,6 +53,10 @@ class ProductUpdateTableModel(private val productList: List<UpdateProductEntry>)
 
     override fun getValueAt(rowIndex: Int, columnIndex: Int): Any {
         return productList[rowIndex].toArray()[columnIndex]
+    }
+
+    fun getStatusAt(rowIndex: Int): UpdateStatus {
+        return productList[rowIndex].status
     }
 
     override fun setValueAt(aValue: Any?, rowIndex: Int, columnIndex: Int) {

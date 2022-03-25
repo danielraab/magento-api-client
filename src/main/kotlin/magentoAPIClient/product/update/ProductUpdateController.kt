@@ -2,8 +2,8 @@ package magentoAPIClient.product.update
 
 import magentoAPIClient.*
 import magentoAPIClient.product.ProductController
-import magentoAPIClient.product.update.selectionTable.ProductSelectionTableModel
-import magentoAPIClient.product.update.selectionTable.ProductSelectionTableJFrame
+import magentoAPIClient.product.update.selectionWindow.ProductSelectionTableModel
+import magentoAPIClient.product.update.selectionWindow.ProductSelectionWindow
 import magentoAPIClient.product.update.updateWindow.ProductUpdateController
 import java.awt.EventQueue
 
@@ -14,7 +14,7 @@ class ProductUpdateController(
 ) :
     GuiControllerInterface {
 
-    private var productSelectorFrame: ProductSelectionTableJFrame? = null
+    private var productSelectorFrame: ProductSelectionWindow? = null
     private var productUpdateController: ProductUpdateController = ProductUpdateController(base)
 
 
@@ -24,7 +24,7 @@ class ProductUpdateController(
                 EventQueue.invokeLater {
                     val tableModel = ProductSelectionTableModel(productController.productList)
                     tableModel.addTableModelListener { updateInfoLabels() }
-                    productSelectorFrame = ProductSelectionTableJFrame("Select products", tableModel)
+                    productSelectorFrame = ProductSelectionWindow("Select products", tableModel)
                     productSelectorFrame!!.initMenu({
                         productController.productList.forEach { it.selected = true }
                         tableModel.productListChanged()
