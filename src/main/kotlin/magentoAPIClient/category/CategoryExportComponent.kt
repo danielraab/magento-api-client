@@ -1,8 +1,8 @@
 package magentoAPIClient.category
 
 import magentoAPIClient.*
-import java.awt.Color
 import java.awt.Label
+import java.awt.Panel
 import javax.swing.*
 
 class CategoryExportComponent : JPanel(), GuiComponentInterface {
@@ -10,9 +10,16 @@ class CategoryExportComponent : JPanel(), GuiComponentInterface {
     private val queryCategoryTreeBtn = JButton("query").apply { background = QUERY_BTN }
     private val categoryTreeSizeJL = JLabel("0")
     private val saveCategoryTreeBtn = JButton("export CSV").apply { background = EXPORT_BTN }
+
     private val queryCategoryListBtn = JButton("query").apply { background = QUERY_BTN }
     private val categoryListSizeJL = JLabel("0")
     private val saveCategoryListBtn = JButton("export CSV").apply { background = EXPORT_BTN }
+
+    private val readCSVFileBtn = JButton("read csv").apply { background = READ_BTN }
+    private val categoryCntLbl = JLabel("0")
+    private val categoryUpdateCntLbl = JLabel("0")
+    private val showUpdatesBtn = JButton("show updates").apply { background = OPEN_WINDOW_BTN }
+    private val openUpdateWindowBtn = JButton("UPDATE").apply { background = OPEN_WINDOW_BTN }
 
     override fun createUI() {
         content {
@@ -39,6 +46,25 @@ class CategoryExportComponent : JPanel(), GuiComponentInterface {
                         add(saveCategoryListBtn)
                     }
                 }
+
+                borderPanelWithTitle("update categories") {
+                    rowLayout()
+                    flowLayoutPanel {
+                        add(readCSVFileBtn)
+                        rowLayout {
+                            flowLayoutPanel {
+                                add(Label("Categories:"))
+                                add(categoryCntLbl)
+                            }
+                            flowLayoutPanel {
+                                add(Label("Updates:"))
+                                add(categoryUpdateCntLbl)
+                            }
+                        }
+                        add(showUpdatesBtn)
+                        add(openUpdateWindowBtn)
+                    }
+                }
             }
         }
     }
@@ -63,16 +89,25 @@ class CategoryExportComponent : JPanel(), GuiComponentInterface {
         if (categoryListCnt >= 0) categoryListSizeJL.text = categoryListCnt.toString()
     }
 
-    fun addBtnActionHandlers(
+    fun addCategoryTreeBtnHandlers(
         queryTreeAction: () -> Unit,
         saveTreeAction: () -> Unit,
-        queryDetailsAction: () -> Unit,
-        saveDetailsAction: () -> Unit
     ) {
         queryCategoryTreeBtn.addActionListener { queryTreeAction() }
         saveCategoryTreeBtn.addActionListener { saveTreeAction() }
+    }
+
+    fun addCategoryDetailBtnHandlers(
+        queryDetailsAction: () -> Unit,
+        saveDetailsAction: () -> Unit
+    ) {
         queryCategoryListBtn.addActionListener { queryDetailsAction() }
         saveCategoryListBtn.addActionListener { saveDetailsAction() }
     }
 
+    fun addCategoryUpdateBtnHandlers(
+        readCsvAction: () -> Unit,
+    ) {
+        readCSVFileBtn.addActionListener { readCsvAction() }
+    }
 }

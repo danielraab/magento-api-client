@@ -19,7 +19,7 @@ class CategoryExportController(private val base: BaseController, private val vie
     private var categoryDetailsList = mutableListOf<CategoryDetail>()
 
     override fun initController() {
-        view.addBtnActionHandlers({
+        view.addCategoryTreeBtnHandlers({
 
             queryHandling(base, refreshTimeoutWhileLoading, {
                 this.config = base.updateConfigFromGui(this.config)
@@ -31,7 +31,9 @@ class CategoryExportController(private val base: BaseController, private val vie
         }, {
             this.config = base.updateConfigFromGui(this.config)
             saveCategoryTreeToCSV(view)
-        }, {
+        })
+
+        view.addCategoryDetailBtnHandlers({
             queryHandling(base, refreshTimeoutWhileLoading, {
                 this.config = base.updateConfigFromGui(this.config)
                 categoryDetailsList.clear()
@@ -137,7 +139,6 @@ class CategoryExportController(private val base: BaseController, private val vie
 
     //endregion
 
-
     //region saving
     private fun saveCategoryDetailListToCSV(parent: Component) {
         if (categoryDetailsList.isNotEmpty()) {
@@ -193,4 +194,7 @@ class CategoryExportController(private val base: BaseController, private val vie
 
 
     //endregion
+
+
+
 }

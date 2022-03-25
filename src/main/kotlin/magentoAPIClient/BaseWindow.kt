@@ -30,9 +30,9 @@ class BaseWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInterf
         attributeExtractionPanel.createUI()
         categoryExportPanel.createUI()
         productComponent.createUI()
-        tabbedPanel.addTab("Attributes", attributeExtractionPanel)
         tabbedPanel.addTab("Categories", categoryExportPanel)
         tabbedPanel.addTab("Products", productComponent)
+        tabbedPanel.addTab("Attributes", attributeExtractionPanel)
         createUI()
         rootPane.registerKeyboardAction(
             { dispatchEvent(WindowEvent(this@BaseWindow, WindowEvent.WINDOW_CLOSING)) },

@@ -17,7 +17,7 @@ class ProductUpdateComponent : JPanel(), GuiComponentInterface {
     private val attrValueTypeJCB = JComboBox(ProductAttributeValueType.values())
     private val attrKeyJTF = JTextField("key").also { it.columns = 10 }
     private val attrValueJTF = JTextField("value").also { it.columns = 10 }
-    private val updateProductsBtn = JButton("update Products").apply { background = OPEN_WINDOW_BTN}
+    private val updateProductsBtn = JButton("UPDATE").apply { background = OPEN_WINDOW_BTN}
 
 
     override fun createUI() {
