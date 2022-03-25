@@ -46,7 +46,9 @@ class CategoryExportController(private val base: BaseController, private val vie
             saveCategoryDetailListToCSV(view)
         })
 
-        view.updateInfoLabels(0, 0)
+        view.addCategoryUpdateBtnHandlers({},{},{}) //TODO
+
+        view.updateInfoLabels(0, 0,0,0)
     }
 
 

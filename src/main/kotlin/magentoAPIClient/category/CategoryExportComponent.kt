@@ -84,9 +84,16 @@ class CategoryExportComponent : JPanel(), GuiComponentInterface {
     }
 
 
-    fun updateInfoLabels(categoryTreeCnt: Int = -1, categoryListCnt: Int = -1) {
+    fun updateInfoLabels(
+        categoryTreeCnt: Int = -1,
+        categoryListCnt: Int = -1,
+        updateCategoryCnt: Int = -1,
+        updatesCnt: Int = -1
+    ) {
         if (categoryTreeCnt >= 0) categoryTreeSizeJL.text = categoryTreeCnt.toString()
         if (categoryListCnt >= 0) categoryListSizeJL.text = categoryListCnt.toString()
+        if (updateCategoryCnt >= 0) categoryCntLbl.text = categoryListCnt.toString()
+        if (updatesCnt >= 0) categoryUpdateCntLbl.text = categoryListCnt.toString()
     }
 
     fun addCategoryTreeBtnHandlers(
@@ -107,7 +114,11 @@ class CategoryExportComponent : JPanel(), GuiComponentInterface {
 
     fun addCategoryUpdateBtnHandlers(
         readCsvAction: () -> Unit,
+        openShowUpdateWindow: () -> Unit,
+        openUpdateWindow: () -> Unit,
     ) {
         readCSVFileBtn.addActionListener { readCsvAction() }
+        showUpdatesBtn.addActionListener { openShowUpdateWindow() }
+        openUpdateWindowBtn.addActionListener { openUpdateWindow() }
     }
 }
