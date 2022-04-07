@@ -4,13 +4,16 @@ import magentoAPIClient.*
 import magentoAPIClient.http.HttpHelper
 import magentoAPIClient.Configuration
 import magentoAPIClient.http.ProductRequestFactory
+import org.apache.commons.csv.CSVFormat
+import org.apache.commons.csv.CSVPrinter
 import org.json.JSONArray
 import org.json.JSONObject
 import java.awt.Component
 import java.io.IOException
 import javax.swing.JOptionPane
 
-class AttributeExtractionController(private val base: BaseController, private val view: AttributeExtractionComponent): GuiControllerInterface {
+class AttributeExtractionController(private val base: BaseController, private val view: AttributeExtractionComponent) :
+    GuiControllerInterface {
 
     private var attributeSets = mutableMapOf<Int, AttributeSet>()
     private var attributes = mutableMapOf<Int, Attribute>()
@@ -53,7 +56,12 @@ class AttributeExtractionController(private val base: BaseController, private va
         } catch (_: IOException) {
         } catch (e: Exception) {
             println("unable to query given url")
-            JOptionPane.showMessageDialog(view, "unable to query given url.", "error in query url", JOptionPane.ERROR_MESSAGE)
+            JOptionPane.showMessageDialog(
+                view,
+                "unable to query given url.",
+                "error in query url",
+                JOptionPane.ERROR_MESSAGE
+            )
         }
     }
 
@@ -167,7 +175,6 @@ class AttributeExtractionController(private val base: BaseController, private va
             saveDialogHandler(
                 parent,
                 createCSVString(
-                    withHeader = true,
                     withAttributeSet = true,
                     withAttributes = false,
                     withOptions = false
@@ -184,7 +191,6 @@ class AttributeExtractionController(private val base: BaseController, private va
             saveDialogHandler(
                 parent,
                 createCSVString(
-                    withHeader = true,
                     withAttributeSet = false,
                     withAttributes = true,
                     withOptions = false
@@ -200,7 +206,7 @@ class AttributeExtractionController(private val base: BaseController, private va
         if (attributes.isNotEmpty()) {
             saveDialogHandler(
                 parent,
-                createCSVString(withHeader = true, withAttributeSet = false, withAttributes = true, withOptions = true),
+                createCSVString(withAttributeSet = false, withAttributes = true, withOptions = true),
                 config.encoding.charset
             )
         } else {
@@ -209,49 +215,46 @@ class AttributeExtractionController(private val base: BaseController, private va
     }
 
     private fun createCSVString(
-        withHeader: Boolean,
         withAttributeSet: Boolean,
         withAttributes: Boolean,
         withOptions: Boolean
     ): String {
-        val csvContent = mutableListOf<String>()
-        if (withHeader) {
-            val headerList = mutableListOf<String>()
-            if (withAttributeSet) headerList.add(AttributeSet.csvHeader(config.columnSeparator.toString()))
-            if (withAttributes) headerList.add(Attribute.csvHeader(config.columnSeparator.toString()))
-            if (withOptions) headerList.add(AttributeOption.csvHeader(config.columnSeparator.toString()))
-            csvContent.add(headerList.joinToString(config.columnSeparator.toString()))
-        }
+        val bld = StringBuilder()
+        val csvPrinter = CSVPrinter(bld, CSVFormat.EXCEL.withDelimiter(config.columnSeparator))
+
+        if (withAttributeSet) csvPrinter.printRecord(AttributeSet.csvHeader(withAttributes, withOptions))
+        else if (withAttributes) csvPrinter.printRecord(Attribute.csvHeader(withOptions))
+        else if (withOptions) csvPrinter.printRecord(AttributeOption.csvHeader())
+        else throw IllegalArgumentException("nothing to print, select at least on part of the attributes")
 
         if (withAttributeSet) {
-            val csvContentList = mutableListOf<String>()
-            csvContentList.addAll(attributeSets.flatMap { (_, attrSet) ->
-                val attrSetCsv = attrSet.toCsvString(config.columnSeparator.toString())
-                if (withAttributes) {
-                    if (attrSet.attributes.isEmpty()) {
-                        attrSetCsv.prefixForList(listOf(Attribute.emptyCsvString(config.columnSeparator.toString(), withOptions)))
-                    } else {
-                        attrSetCsv.prefixForList(attrSet.attributes.toCSVList(withOptions))
-                    }
-                } else {
-                    listOf(attrSetCsv)
-                }
-            })
+            attributeSets.forEach { (_, attrSet) ->
+                attrSet.toCsvList(withAttributes, withOptions).forEach { csvPrinter.printRecord(it) }
+            }
 
             if (withAttributes) {
-                csvContentList.addAll(
-                    AttributeSet.emptyCsvString(config.columnSeparator.toString()).prefixForList(attributes.filterNot {
-                        attributeSets.flatMap { set -> set.value.attributes.keys }.contains(it.key)
-                    }.toCSVList(withOptions))
-                )
+                attributes.filterNot {
+                    attributeSets.flatMap { set -> set.value.attributes.keys }.contains(it.key)
+                }.forEach { (_, attr) ->
+                    attr.toCsvList(withOptions).forEach {
+                        csvPrinter.printRecord(AttributeSet.emptyCsv() + it)
+                    }
+                }
             }
-            csvContent.addAll(csvContentList)
         } else if (withAttributes) {
-            csvContent.addAll(attributes.toCSVList(withOptions))
+            attributes.forEach { (_, attr) ->
+                attr.toCsvList(withOptions).forEach { csvPrinter.printRecord(it) }
+            }
         } else if (withOptions) {
-            csvContent.addAll(attributeOptions.map { it.toCsvString(config.columnSeparator.toString()) })
+            attributeOptions.forEach {
+                csvPrinter.printRecord(it.toCsv())
+            }
         }
-        return csvContent.joinToString(System.lineSeparator())
+
+        csvPrinter.flush()
+        csvPrinter.close()
+
+        return bld.toString()
     }
 
     private fun saveAllToCSV(parent: Component) {
@@ -259,7 +262,7 @@ class AttributeExtractionController(private val base: BaseController, private va
 
             saveDialogHandler(
                 parent,
-                createCSVString(withHeader = true, withAttributeSet = true, withAttributes = true, withOptions = true),
+                createCSVString(withAttributeSet = true, withAttributes = true, withOptions = true),
                 config.encoding.charset
             )
         } else {
@@ -268,32 +271,6 @@ class AttributeExtractionController(private val base: BaseController, private va
     }
 
     //endregion
-
-    //region csv generating extension function
-
-    private fun Map<Int, Attribute>.toCSVList(withOptions: Boolean = false): List<String> {
-        return this.flatMap { (_, attr) ->
-            attr.toCSVList(withOptions)
-        }
-    }
-
-    private fun Attribute.toCSVList(withOptions: Boolean): List<String> {
-        val baseString = this.toCsvString(config.columnSeparator.toString())
-        return if (withOptions) {
-            if (this.options.isEmpty()) {
-                baseString.prefixForList(listOf(AttributeOption.emptyCsvString(config.columnSeparator.toString())))
-            } else {
-                baseString.prefixForList(this.options.map { it.value.toCsvString(config.columnSeparator.toString()) })
-            }
-        } else
-            listOf(baseString)
-    }
-
-    private fun String.prefixForList(list: List<String>) =
-        list.map { joinStrings(config.columnSeparator.toString(), this, it) }
-
-    //endregion
-
 
     //region attribute json methods
 
