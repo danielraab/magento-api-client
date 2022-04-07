@@ -106,7 +106,7 @@ class BaseController(private val view: BaseWindow): GuiControllerInterface{
             this.getString("baseUrl"),
             this.getString("auth"),
             this.getString("storeView"),
-            this.getString("columnSeparator"),
+            this.getString("columnSeparator").first(),
             AvailableCharset.valueOf(this.getString("encoding"))
         )
 
@@ -159,7 +159,7 @@ fun saveDialogHandler(parent: Component, contentToSave: String, encoding: Charse
     }
 }
 
-fun readFileDialogHandler(parent: JFrame, encoding: Charset): String {
+fun readFileDialogHandler(parent: Component, encoding: Charset): String {
     val fileChooser = JFileChooser()
 
     if (fileChooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION) {

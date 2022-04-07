@@ -9,7 +9,7 @@ data class Configuration(
     var baseUrl: String = "",
     var authentication: String = "",
     var storeView: String = "",
-    var columnSeparator: String = ";",
+    var columnSeparator: Char = ';',
     var encoding: AvailableCharset = AvailableCharset.ISO_8859_1,
     val productAttributeUpdateList: MutableList<ProductAttributeUpdate> = mutableListOf()
 )

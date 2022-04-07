@@ -159,7 +159,7 @@ class ProductLoadExportController(
 
         lines.addAll(productController.productList.flatMap { it.toCsvList() })
 
-        return lines.joinToString(System.lineSeparator()) { list -> list.joinToString(config.columnSeparator) { it.toQuoteString() } }
+        return lines.joinToString(System.lineSeparator()) { list -> list.joinToString(config.columnSeparator.toString()) { it.toQuoteString() } }
 
     }
 

@@ -1,6 +1,6 @@
 package magentoAPIClient.category
 
-import magentoAPIClient.quote
+import org.apache.commons.csv.CSVPrinter
 
 data class CategoryBasics(
     val id: Int,
@@ -28,70 +28,68 @@ data class CategoryDetail(
 }
 
 
-fun CategoryBasics.toCsvString(columnSeparator: String): String {
+fun CategoryBasics.toCsv(): List<Any> {
     return listOf(
         this.id,
         this.parentId,
-        this.name.quote(),
+        this.name,
         this.isActive,
         this.position,
         this.level,
         this.productCnt,
         this.children.size
-    ).joinToString(columnSeparator)
+    )
 }
 
-fun CategoryBasics.toLevelBasedCsvTree(columnSeparator: String): String {
+fun CategoryBasics.toLevelBasedCsvTree(): List<String> {
     val cols = mutableListOf<String>()
-    repeat(this.level-1) {cols.add("")}
+    repeat(this.level - 1) { cols.add("") }
     cols.add(this.id.toString())
-    cols.add(this.name.quote())
-    return cols.joinToString(columnSeparator)
+    cols.add(this.name)
+    return cols
 }
 
-fun CategoryBasics.recursiveCsvTree(columnSeparator: String, treeList: MutableList<String>){
-    treeList.add(this.toLevelBasedCsvTree(columnSeparator))
-    this.children.forEach { it.recursiveCsvTree(columnSeparator, treeList) }
+fun CategoryBasics.recursiveCsvTree(csvPrinter: CSVPrinter) {
+    csvPrinter.printRecord(this.toLevelBasedCsvTree())
+    this.children.forEach { it.recursiveCsvTree(csvPrinter) }
 }
 
 
-fun CategoryDetail.toCsvString(columnSeparator: String): List<String> {
-    val preAttrInfo = listOf(
-        this.basic.toCsvString(columnSeparator),
-        this.includeInMenu
-    ).joinToString(columnSeparator)
+fun CategoryDetail.toCsvList(): List<List<Any>> {
+    val preAttrInfo = this.basic.toCsv() + listOf(this.includeInMenu)
 
-    val catDetailsList = mutableListOf<String>()
+    val catDetailsList = mutableListOf<List<Any>>()
 
-    if (this.customAttributes.isEmpty())
-        catDetailsList.add(listOf(preAttrInfo, "", "").joinToString(columnSeparator))
-    else
+    if (this.customAttributes.isEmpty()) {
+        catDetailsList.add(preAttrInfo + listOf("", ""))
+    } else {
         catDetailsList.addAll(this.customAttributes.map {
-            listOf(preAttrInfo, it.key.quote(), it.value.quote()).joinToString(columnSeparator)
+            preAttrInfo + listOf(it.key, it.value)
         })
+    }
 
     return catDetailsList
 }
 
 
-fun CategoryBasics.Companion.csvHeader(columnSeparator: String): String {
+fun CategoryBasics.Companion.csvHeader(): List<String> {
     return listOf(
-        "cat.id".quote(),
-        "cat.parentId".quote(),
-        "cat.name".quote(),
-        "cat.isActive".quote(),
-        "cat.position".quote(),
-        "cat.level".quote(),
-        "cat.productCnt".quote(),
-        "cat.childrenCnt".quote()
-    ).joinToString(columnSeparator)
+        "cat.id",
+        "cat.parentId",
+        "cat.name",
+        "cat.isActive",
+        "cat.position",
+        "cat.level",
+        "cat.productCnt",
+        "cat.childrenCnt"
+    )
 }
 
-fun CategoryDetail.Companion.csvHeader(columnSeparator: String): String {
-    return listOf(
-        CategoryBasics.csvHeader(columnSeparator),
-        "cat.includeInMenu".quote(),
-        "cat.customAttrCode".quote(),
-        "cat.customAttrValue".quote()
-    ).joinToString(columnSeparator)
+fun CategoryDetail.Companion.csvHeader(): List<String> {
+    return CategoryBasics.csvHeader() +
+            listOf(
+                "cat.includeInMenu",
+                "cat.customAttrCode",
+                "cat.customAttrValue"
+            )
 }

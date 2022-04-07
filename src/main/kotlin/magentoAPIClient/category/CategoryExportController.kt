@@ -3,6 +3,8 @@ package magentoAPIClient.category
 import magentoAPIClient.*
 import magentoAPIClient.http.CategoryRequestFactory
 import magentoAPIClient.http.HttpHelper
+import org.apache.commons.csv.CSVFormat
+import org.apache.commons.csv.CSVPrinter
 import org.json.JSONArray
 import org.json.JSONObject
 import java.awt.Component
@@ -46,9 +48,11 @@ class CategoryExportController(private val base: BaseController, private val vie
             saveCategoryDetailListToCSV(view)
         })
 
-        view.addCategoryUpdateBtnHandlers({},{},{}) //TODO
+        view.addCategoryUpdateBtnHandlers({
+            readFileDialogHandler(view, AvailableCharset.ISO_8859_1.charset)
+        }, {}, {}) //TODO
 
-        view.updateInfoLabels(0, 0,0,0)
+        view.updateInfoLabels(0, 0, 0, 0)
     }
 
 
@@ -146,10 +150,7 @@ class CategoryExportController(private val base: BaseController, private val vie
         if (categoryDetailsList.isNotEmpty()) {
             saveDialogHandler(
                 view,
-                createCategoryDetailsListCSV(
-                    withHeader = true,
-                    withDetails = true
-                ),
+                createCategoryDetailsListCSV(),
                 config.encoding.charset
             )
         } else {
@@ -157,20 +158,22 @@ class CategoryExportController(private val base: BaseController, private val vie
         }
     }
 
-    private fun createCategoryDetailsListCSV(withHeader: Boolean, withDetails: Boolean): String {
-        val lines = mutableListOf<String>()
-        if (withHeader) {
-            lines.add(
-                if (withDetails) CategoryDetail.csvHeader(config.columnSeparator) else CategoryBasics.csvHeader(
-                    config.columnSeparator
-                )
-            )
-        }
+    private fun createCategoryDetailsListCSV(): String {
+        val bld = StringBuilder()
+        val csvPrinter = CSVPrinter(
+            bld,
+//            CSVFormat.EXCEL.withHeader(*(CategoryDetail.csvHeader().toTypedArray())).withDelimiter(config.columnSeparator)
+            CSVFormat.EXCEL.withDelimiter(config.columnSeparator)
+        )
 
-        if (withDetails) lines.addAll(categoryDetailsList.flatMap { it.toCsvString(config.columnSeparator) })
-        else lines.addAll(categoryDetailsList.map { it.basic.toCsvString(config.columnSeparator) })
+        csvPrinter.printRecord(CategoryDetail.csvHeader())
 
-        return lines.joinToString(System.lineSeparator())
+        categoryDetailsList.forEach { csvPrinter.printRecords(it.toCsvList()) }
+
+        csvPrinter.flush()
+        csvPrinter.close()
+
+        return bld.toString()
     }
 
 
@@ -187,16 +190,19 @@ class CategoryExportController(private val base: BaseController, private val vie
     }
 
     private fun createCategoryTreeCSV(): String {
-        val lines = mutableListOf<String>()
+        val bld = StringBuilder()
+        val csvPrinter = CSVPrinter(bld, CSVFormat.EXCEL.withDelimiter(config.columnSeparator))
 
-        treeRootCategory?.recursiveCsvTree(config.columnSeparator, lines)
+        treeRootCategory?.recursiveCsvTree(csvPrinter)
 
-        return lines.joinToString(System.lineSeparator())
+        csvPrinter.flush()
+        csvPrinter.close()
+
+        return bld.toString()
     }
 
 
     //endregion
-
 
 
 }

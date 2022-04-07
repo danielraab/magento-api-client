@@ -217,19 +217,19 @@ class AttributeExtractionController(private val base: BaseController, private va
         val csvContent = mutableListOf<String>()
         if (withHeader) {
             val headerList = mutableListOf<String>()
-            if (withAttributeSet) headerList.add(AttributeSet.csvHeader(config.columnSeparator))
-            if (withAttributes) headerList.add(Attribute.csvHeader(config.columnSeparator))
-            if (withOptions) headerList.add(AttributeOption.csvHeader(config.columnSeparator))
-            csvContent.add(headerList.joinToString(config.columnSeparator))
+            if (withAttributeSet) headerList.add(AttributeSet.csvHeader(config.columnSeparator.toString()))
+            if (withAttributes) headerList.add(Attribute.csvHeader(config.columnSeparator.toString()))
+            if (withOptions) headerList.add(AttributeOption.csvHeader(config.columnSeparator.toString()))
+            csvContent.add(headerList.joinToString(config.columnSeparator.toString()))
         }
 
         if (withAttributeSet) {
             val csvContentList = mutableListOf<String>()
             csvContentList.addAll(attributeSets.flatMap { (_, attrSet) ->
-                val attrSetCsv = attrSet.toCsvString(config.columnSeparator)
+                val attrSetCsv = attrSet.toCsvString(config.columnSeparator.toString())
                 if (withAttributes) {
                     if (attrSet.attributes.isEmpty()) {
-                        attrSetCsv.prefixForList(listOf(Attribute.emptyCsvString(config.columnSeparator, withOptions)))
+                        attrSetCsv.prefixForList(listOf(Attribute.emptyCsvString(config.columnSeparator.toString(), withOptions)))
                     } else {
                         attrSetCsv.prefixForList(attrSet.attributes.toCSVList(withOptions))
                     }
@@ -240,7 +240,7 @@ class AttributeExtractionController(private val base: BaseController, private va
 
             if (withAttributes) {
                 csvContentList.addAll(
-                    AttributeSet.emptyCsvString(config.columnSeparator).prefixForList(attributes.filterNot {
+                    AttributeSet.emptyCsvString(config.columnSeparator.toString()).prefixForList(attributes.filterNot {
                         attributeSets.flatMap { set -> set.value.attributes.keys }.contains(it.key)
                     }.toCSVList(withOptions))
                 )
@@ -249,7 +249,7 @@ class AttributeExtractionController(private val base: BaseController, private va
         } else if (withAttributes) {
             csvContent.addAll(attributes.toCSVList(withOptions))
         } else if (withOptions) {
-            csvContent.addAll(attributeOptions.map { it.toCsvString(config.columnSeparator) })
+            csvContent.addAll(attributeOptions.map { it.toCsvString(config.columnSeparator.toString()) })
         }
         return csvContent.joinToString(System.lineSeparator())
     }
@@ -278,19 +278,19 @@ class AttributeExtractionController(private val base: BaseController, private va
     }
 
     private fun Attribute.toCSVList(withOptions: Boolean): List<String> {
-        val baseString = this.toCsvString(config.columnSeparator)
+        val baseString = this.toCsvString(config.columnSeparator.toString())
         return if (withOptions) {
             if (this.options.isEmpty()) {
-                baseString.prefixForList(listOf(AttributeOption.emptyCsvString(config.columnSeparator)))
+                baseString.prefixForList(listOf(AttributeOption.emptyCsvString(config.columnSeparator.toString())))
             } else {
-                baseString.prefixForList(this.options.map { it.value.toCsvString(config.columnSeparator) })
+                baseString.prefixForList(this.options.map { it.value.toCsvString(config.columnSeparator.toString()) })
             }
         } else
             listOf(baseString)
     }
 
     private fun String.prefixForList(list: List<String>) =
-        list.map { joinStrings(config.columnSeparator, this, it) }
+        list.map { joinStrings(config.columnSeparator.toString(), this, it) }
 
     //endregion
 

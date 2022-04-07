@@ -98,7 +98,7 @@ class BaseWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInterf
         baseUrlJTF.text = config.baseUrl
         authJTF.text = config.authentication
         storeViewJTF.text = config.storeView
-        columnSeparatorJTF.text = config.columnSeparator
+        columnSeparatorJTF.text = config.columnSeparator.toString()
         encodingJCB.selectedItem = config.encoding
         attributeExtractionPanel.updateGuiFromConfig(config)
         categoryExportPanel.updateGuiFromConfig(config)
@@ -109,7 +109,7 @@ class BaseWindow : JFrame("Magento API Attribute Extractor"), GuiComponentInterf
         var newConfig = Configuration(baseUrlJTF.text, authJTF.text)
         val sel = encodingJCB.selectedItem
 
-        newConfig.columnSeparator = columnSeparatorJTF.text
+        newConfig.columnSeparator = columnSeparatorJTF.text.first()
         if (sel is AvailableCharset) newConfig.encoding = sel
 
         newConfig.storeView = storeViewJTF.text

@@ -1,4 +1,4 @@
 package magentoAPIClient
 
 
-fun String.quote() = "\"${this.replace("\"", "\"\"")}\""
+fun String.quote() = "\"${this.replace("\"", "\"\"")}\""    //TODO remove ??
