@@ -92,8 +92,8 @@ class CategoryExportComponent : JPanel(), GuiComponentInterface {
     ) {
         if (categoryTreeCnt >= 0) categoryTreeSizeJL.text = categoryTreeCnt.toString()
         if (categoryListCnt >= 0) categoryListSizeJL.text = categoryListCnt.toString()
-        if (updateCategoryCnt >= 0) categoryCntLbl.text = categoryListCnt.toString()
-        if (updatesCnt >= 0) categoryUpdateCntLbl.text = categoryListCnt.toString()
+        if (updateCategoryCnt >= 0) categoryCntLbl.text = updateCategoryCnt.toString()
+        if (updatesCnt >= 0) categoryUpdateCntLbl.text = updatesCnt.toString()
     }
 
     fun addCategoryTreeBtnHandlers(

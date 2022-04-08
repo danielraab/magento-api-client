@@ -4,11 +4,13 @@ import magentoAPIClient.*
 import magentoAPIClient.http.CategoryRequestFactory
 import magentoAPIClient.http.HttpHelper
 import org.apache.commons.csv.CSVFormat
+import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVPrinter
 import org.json.JSONArray
 import org.json.JSONObject
 import java.awt.Component
-import java.io.IOException
+import java.io.*
+import java.lang.IllegalArgumentException
 import java.net.http.HttpResponse
 import javax.swing.JOptionPane
 
@@ -19,6 +21,7 @@ class CategoryExportController(private val base: BaseController, private val vie
 
     private var treeRootCategory: CategoryBasics? = null
     private var categoryDetailsList = mutableListOf<CategoryDetail>()
+    private var categoryUpdateList = listOf<CategoryUpdate>()
 
     override fun initController() {
         view.addCategoryTreeBtnHandlers({
@@ -49,10 +52,42 @@ class CategoryExportController(private val base: BaseController, private val vie
         })
 
         view.addCategoryUpdateBtnHandlers({
-            readFileDialogHandler(view, AvailableCharset.ISO_8859_1.charset)
+            readCategoryUpdatesFromFile()
+            view.updateInfoLabels(
+                updateCategoryCnt = categoryUpdateList.size,
+                updatesCnt = categoryUpdateList.sumOf { it.customAttributes.size })
         }, {}, {}) //TODO
 
         view.updateInfoLabels(0, 0, 0, 0)
+    }
+
+    private fun readCategoryUpdatesFromFile() {
+
+        try {
+
+            val file = openFileDialogHandler(view) ?: throw FileNotFoundException()
+
+            val csvParser = CSVParser(
+                FileReader(file),
+                CSVFormat.EXCEL.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim()
+                    .withDelimiter(config.columnSeparator)
+            )
+
+            val catUpdateList = mutableMapOf<Int, CategoryUpdate>()
+
+            for (csvRecord in csvParser) {
+                val id = csvRecord.get("cat.id").toInt()
+                val catUpdate = catUpdateList[id] ?: CategoryUpdate(id)
+
+                catUpdate.customAttributes[csvRecord.get("cat.customAttrCode")] = csvRecord.get("cat.customAttrValue")
+                catUpdateList[catUpdate.id] = catUpdate
+            }
+
+            categoryUpdateList = catUpdateList.values.toList()
+        } catch (_: FileNotFoundException) { }
+        catch (iae: IllegalArgumentException) {
+            JOptionPane.showMessageDialog(view, "Unable to read csv file.")
+        }
     }
 
 

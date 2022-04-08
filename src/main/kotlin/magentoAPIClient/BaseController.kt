@@ -160,17 +160,22 @@ fun saveDialogHandler(parent: Component, contentToSave: String, encoding: Charse
 }
 
 fun readFileDialogHandler(parent: Component, encoding: Charset): String {
+
+    return openFileDialogHandler(parent)?.readText(encoding) ?: ""
+}
+
+fun openFileDialogHandler(parent: Component): File? {
     val fileChooser = JFileChooser()
 
     if (fileChooser.showOpenDialog(parent) == JFileChooser.APPROVE_OPTION) {
-        val fileToSave: File = fileChooser.selectedFile
-        if (fileToSave.canRead()) {
-            return fileToSave.readText(encoding)
+        val fileToRead: File = fileChooser.selectedFile
+        if (fileToRead.canRead()) {
+            return fileToRead
         } else {
             JOptionPane.showMessageDialog(parent, "File cannot be read.")
         }
     }
-    return ""
+    return null
 }
 
 //endregion

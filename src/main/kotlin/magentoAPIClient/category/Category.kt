@@ -93,3 +93,6 @@ fun CategoryDetail.Companion.csvHeader(): List<String> {
                 "cat.customAttrValue"
             )
 }
+
+
+data class CategoryUpdate(val id: Int, val customAttributes: MutableMap<String, String> = mutableMapOf())

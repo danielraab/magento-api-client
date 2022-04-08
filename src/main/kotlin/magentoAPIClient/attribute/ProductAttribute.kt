@@ -101,7 +101,7 @@ data class AttributeSet(val id: Int, val name: String, val attributes: MutableMa
 }
 
 
-//region csv extension functions
+//region csv attribute set functions
 
 fun AttributeSet.toCsv(): List<Any> {
     return listOf(this.id, this.name)
