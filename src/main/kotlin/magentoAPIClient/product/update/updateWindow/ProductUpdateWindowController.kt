@@ -11,7 +11,7 @@ import java.net.ConnectException
 import javax.swing.JOptionPane
 import javax.swing.SwingWorker
 
-class ProductUpdateController(val base: BaseController) {
+class ProductUpdateWindowController(val base: BaseController) {
 
     private var updateWorker: UpdateProductsWorker? = null
     private var config = Configuration()
@@ -49,7 +49,7 @@ class ProductUpdateController(val base: BaseController) {
     }
 
     class UpdateProductsWorker(
-        private val controller: ProductUpdateController
+        private val controller: ProductUpdateWindowController
     ) : SwingWorker<Unit, UpdateProductEntry>() {
 
         override fun doInBackground() {

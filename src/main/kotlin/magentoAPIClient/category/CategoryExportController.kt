@@ -1,6 +1,8 @@
 package magentoAPIClient.category
 
 import magentoAPIClient.*
+import magentoAPIClient.category.overview.CategoryUpdateOverviewTableModel
+import magentoAPIClient.category.overview.CategoryUpdateOverviewWindow
 import magentoAPIClient.http.CategoryRequestFactory
 import magentoAPIClient.http.HttpHelper
 import org.apache.commons.csv.CSVFormat
@@ -9,6 +11,7 @@ import org.apache.commons.csv.CSVPrinter
 import org.json.JSONArray
 import org.json.JSONObject
 import java.awt.Component
+import java.awt.event.WindowEvent
 import java.io.*
 import java.lang.IllegalArgumentException
 import java.net.http.HttpResponse
@@ -22,6 +25,8 @@ class CategoryExportController(private val base: BaseController, private val vie
     private var treeRootCategory: CategoryBasics? = null
     private var categoryDetailsList = mutableListOf<CategoryDetail>()
     private var categoryUpdateList = listOf<CategoryUpdate>()
+
+    private var categoryUpdateWindow:CategoryUpdateOverviewWindow? = null
 
     override fun initController() {
         view.addCategoryTreeBtnHandlers({
@@ -56,7 +61,14 @@ class CategoryExportController(private val base: BaseController, private val vie
             view.updateInfoLabels(
                 updateCategoryCnt = categoryUpdateList.size,
                 updatesCnt = categoryUpdateList.sumOf { it.customAttributes.size })
-        }, {}, {}) //TODO
+        }, {
+            if(categoryUpdateWindow != null && categoryUpdateWindow!!.isVisible)
+                categoryUpdateWindow!!.dispatchEvent(WindowEvent(categoryUpdateWindow, WindowEvent.WINDOW_CLOSING))
+
+            categoryUpdateWindow = CategoryUpdateOverviewWindow("Updates", CategoryUpdateOverviewTableModel(categoryUpdateList))
+        }, {
+            //TODO
+        })
 
         view.updateInfoLabels(0, 0, 0, 0)
     }
@@ -76,10 +88,10 @@ class CategoryExportController(private val base: BaseController, private val vie
             val catUpdateList = mutableMapOf<Int, CategoryUpdate>()
 
             for (csvRecord in csvParser) {
-                val id = csvRecord.get("cat.id").toInt()
+                val id = csvRecord.get(CategoryUpdateHeader.ID.label).toInt()
                 val catUpdate = catUpdateList[id] ?: CategoryUpdate(id)
 
-                catUpdate.customAttributes[csvRecord.get("cat.customAttrCode")] = csvRecord.get("cat.customAttrValue")
+                catUpdate.customAttributes[csvRecord.get(CategoryUpdateHeader.CODE.label)] = csvRecord.get(CategoryUpdateHeader.VALUE.label)
                 catUpdateList[catUpdate.id] = catUpdate
             }
 

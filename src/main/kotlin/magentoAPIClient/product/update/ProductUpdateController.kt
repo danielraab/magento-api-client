@@ -4,7 +4,7 @@ import magentoAPIClient.*
 import magentoAPIClient.product.ProductController
 import magentoAPIClient.product.update.selectionWindow.ProductSelectionTableModel
 import magentoAPIClient.product.update.selectionWindow.ProductSelectionWindow
-import magentoAPIClient.product.update.updateWindow.ProductUpdateController
+import magentoAPIClient.product.update.updateWindow.ProductUpdateWindowController
 import java.awt.EventQueue
 
 class ProductUpdateController(
@@ -15,7 +15,7 @@ class ProductUpdateController(
     GuiControllerInterface {
 
     private var productSelectorFrame: ProductSelectionWindow? = null
-    private var productUpdateController: ProductUpdateController = ProductUpdateController(base)
+    private var productUpdateController: ProductUpdateWindowController = ProductUpdateWindowController(base)
 
 
     override fun initController() {

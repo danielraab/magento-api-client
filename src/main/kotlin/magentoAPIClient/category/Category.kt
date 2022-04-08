@@ -95,4 +95,19 @@ fun CategoryDetail.Companion.csvHeader(): List<String> {
 }
 
 
-data class CategoryUpdate(val id: Int, val customAttributes: MutableMap<String, String> = mutableMapOf())
+enum class CategoryUpdateHeader(val label: String) {
+    ID("cat.id"), CODE("cat.customAttrCode"), VALUE("cat.customAttrValue");
+}
+
+data class CategoryUpdate(val id: Int, val customAttributes: MutableMap<String, String> = mutableMapOf()) {
+
+    fun toList() = customAttributes.map { listOf(id, it.key, it.value) }
+
+    companion object {
+        fun getColumnsClass() = arrayOf(
+            Int::class.javaObjectType,
+            String::class.javaObjectType,
+            String::class.javaObjectType
+        )
+    }
+}
