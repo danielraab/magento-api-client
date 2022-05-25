@@ -178,7 +178,7 @@ class ProductLoadExportController(
 
     private fun Any.toQuoteString() = when (this) {
         is Number -> this.toString()
-        else -> this.toString().quote()
+        else -> "\"${this.toString().replace("\"", "\"\"")}\""
     }
 
 

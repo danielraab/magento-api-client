@@ -1,21 +1,20 @@
-{
-  "productAttributeUpdates": [
-    {
-      "valueType": "NUMBER",
-      "type": "BASIC",
-      "value": "1",
-      "key": "status"
-    },
-    {
-      "valueType": "NUMBER",
-      "type": "BASIC",
-      "value": "1",
-      "key": "status"
-    }
-  ],
-  "baseUrl": "https://mag4.fronius.com",
-  "auth": "Bearer correctTestBearer",
-  "columnSeparator": ";",
+{  "productAttributeUpdates": [
+  {
+    "valueType": "NUMBER",
+    "type": "BASIC",
+    "value": "1",
+    "key": "status"
+  },
+  {
+    "valueType": "NUMBER",
+    "type": "BASIC",
+    "value": "1",
+    "key": "status"
+  }
+],
+  "baseUrl": "http://welding-shop-refactoring.local",
+  "auth": "Bearer i8n2v3sz59cdld6fk52ln7etx3d0e76r",
   "storeView": "all",
+  "columnSeparator": ";",
   "encoding": "ISO_8859_1"
 }

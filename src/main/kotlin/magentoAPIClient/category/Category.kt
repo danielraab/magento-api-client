@@ -1,6 +1,7 @@
 package magentoAPIClient.category
 
 import org.apache.commons.csv.CSVPrinter
+import org.json.JSONObject
 
 data class CategoryBasics(
     val id: Int,
@@ -96,16 +97,31 @@ fun CategoryDetail.Companion.csvHeader(): List<String> {
 
 
 enum class CategoryUpdateHeader(val label: String) {
-    ID("cat.id"), CODE("cat.customAttrCode"), VALUE("cat.customAttrValue");
+    ID("cat.id"), TYPE("cat.attributeType"), CODE("cat.attrCode"), VALUE("cat.attrValue");
 }
+
+enum class CategoryAttributeType(val label: String) { CUSTOM_ATTRIBUTE("custom_attribute") }
 
 data class CategoryUpdate(val id: Int, val customAttributes: MutableMap<String, String> = mutableMapOf()) {
 
-    fun toList() = customAttributes.map { listOf(id, it.key, it.value) }
+    fun toList() = customAttributes.map { listOf(id, CategoryAttributeType.CUSTOM_ATTRIBUTE, it.key, it.value) }
+
+    fun toUpdateJSONObject(): JSONObject {
+        val obj = JSONObject();
+
+        obj.put("custom_attributes", customAttributes.map { attr ->
+            JSONObject().also {
+                it.put("attribute_code", attr.key)
+                it.put("value", attr.value)
+            }
+        })
+        return obj
+    }
 
     companion object {
         fun getColumnsClass() = arrayOf(
             Int::class.javaObjectType,
+            String::class.javaObjectType,
             String::class.javaObjectType,
             String::class.javaObjectType
         )

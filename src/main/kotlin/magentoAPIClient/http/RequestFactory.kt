@@ -1,5 +1,6 @@
 package magentoAPIClient.http
 
+import magentoAPIClient.category.CategoryUpdate
 import magentoAPIClient.product.ProductAttributeType
 import magentoAPIClient.product.ProductAttributeUpdate
 import magentoAPIClient.product.ProductAttributeValueType
@@ -136,6 +137,22 @@ class CategoryRequestFactory {
             Method.GET,
             mutableMapOf("searchCriteria[pageSize]" to pageSize.toString()),
             mutableMapOf(Header.AUTHORIZATION to authentication)
+        )
+
+        fun updateCategory(
+            baseUrl: String,
+            authentication: String,
+            storeView: String?,
+            categoryUpdate: CategoryUpdate
+        ) = RequestInfo(
+            baseUrl,
+            "/rest/${storeView?.let { "$it/" }}V1/categories/${categoryUpdate.id}",
+            Method.PUT,
+            mutableMapOf(),
+            mutableMapOf(Header.AUTHORIZATION to authentication, Header.CONTENT_TYPE to HeaderContentType.JSON.key),
+            JSONObject().also { prod ->
+                prod.put("category", categoryUpdate.toUpdateJSONObject())
+            }.toString()
         )
     }
 }

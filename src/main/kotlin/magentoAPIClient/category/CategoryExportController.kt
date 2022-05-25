@@ -3,11 +3,13 @@ package magentoAPIClient.category
 import magentoAPIClient.*
 import magentoAPIClient.category.overview.CategoryUpdateOverviewTableModel
 import magentoAPIClient.category.overview.CategoryUpdateOverviewWindow
+import magentoAPIClient.category.update.CategoryUpdateWindowController
 import magentoAPIClient.http.CategoryRequestFactory
 import magentoAPIClient.http.HttpHelper
 import org.apache.commons.csv.CSVFormat
 import org.apache.commons.csv.CSVParser
 import org.apache.commons.csv.CSVPrinter
+import org.apache.commons.csv.CSVRecord
 import org.json.JSONArray
 import org.json.JSONObject
 import java.awt.Component
@@ -27,6 +29,7 @@ class CategoryExportController(private val base: BaseController, private val vie
     private var categoryUpdateList = listOf<CategoryUpdate>()
 
     private var categoryUpdateWindow:CategoryUpdateOverviewWindow? = null
+    private var categoryUpdateController: CategoryUpdateWindowController = CategoryUpdateWindowController(base)
 
     override fun initController() {
         view.addCategoryTreeBtnHandlers({
@@ -56,6 +59,7 @@ class CategoryExportController(private val base: BaseController, private val vie
             saveCategoryDetailListToCSV(view)
         })
 
+
         view.addCategoryUpdateBtnHandlers({
             readCategoryUpdatesFromFile()
             view.updateInfoLabels(
@@ -67,7 +71,7 @@ class CategoryExportController(private val base: BaseController, private val vie
 
             categoryUpdateWindow = CategoryUpdateOverviewWindow("Updates", CategoryUpdateOverviewTableModel(categoryUpdateList))
         }, {
-            //TODO
+            categoryUpdateController.showWindow(categoryUpdateList)
         })
 
         view.updateInfoLabels(0, 0, 0, 0)
@@ -85,21 +89,33 @@ class CategoryExportController(private val base: BaseController, private val vie
                     .withDelimiter(config.columnSeparator)
             )
 
-            val catUpdateList = mutableMapOf<Int, CategoryUpdate>()
-
-            for (csvRecord in csvParser) {
-                val id = csvRecord.get(CategoryUpdateHeader.ID.label).toInt()
-                val catUpdate = catUpdateList[id] ?: CategoryUpdate(id)
-
-                catUpdate.customAttributes[csvRecord.get(CategoryUpdateHeader.CODE.label)] = csvRecord.get(CategoryUpdateHeader.VALUE.label)
-                catUpdateList[catUpdate.id] = catUpdate
-            }
-
-            categoryUpdateList = catUpdateList.values.toList()
+            categoryUpdateList = parseCSVToCategoryUpdateList(csvParser)
         } catch (_: FileNotFoundException) { }
         catch (iae: IllegalArgumentException) {
             JOptionPane.showMessageDialog(view, "Unable to read csv file.")
         }
+    }
+
+    private fun parseCSVToCategoryUpdateList(csvParser: CSVParser): List<CategoryUpdate> {
+
+        val catUpdateList = mutableMapOf<Int, CategoryUpdate>()
+
+        for (csvRecord in csvParser) {
+            val id = csvRecord.get(CategoryUpdateHeader.ID.label).toInt()
+            val catUpdate = catUpdateList[id] ?: CategoryUpdate(id)
+
+            catUpdateList[catUpdate.id] = addCSVRecordToCategoryUpdate(catUpdate, csvRecord)
+        }
+
+        return catUpdateList.values.toList()
+    }
+
+    private fun addCSVRecordToCategoryUpdate(catUpdate:CategoryUpdate, csvRecord:CSVRecord): CategoryUpdate {
+        when(csvRecord.get(CategoryUpdateHeader.TYPE.label)) {
+            CategoryAttributeType.CUSTOM_ATTRIBUTE.label -> catUpdate.customAttributes[csvRecord.get(CategoryUpdateHeader.CODE.label)] = csvRecord.get(CategoryUpdateHeader.VALUE.label)
+        }
+
+        return catUpdate
     }
 
 
