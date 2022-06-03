@@ -29,7 +29,7 @@ class CategoryExportController(private val base: BaseController, private val vie
     private var categoryDetailsList = mutableListOf<CategoryDetail>()
     private var categoryUpdateList = listOf<CategoryUpdate>()
 
-    private var categoryUpdateWindow:CategoryUpdateOverviewWindow? = null
+    private var categoryUpdateWindow: CategoryUpdateOverviewWindow? = null
     private var categoryUpdateController: CategoryUpdateWindowController = CategoryUpdateWindowController(base)
 
     override fun initController() {
@@ -67,10 +67,11 @@ class CategoryExportController(private val base: BaseController, private val vie
                 updateCategoryCnt = categoryUpdateList.size,
                 updatesCnt = categoryUpdateList.sumOf { it.customAttributes.size })
         }, {
-            if(categoryUpdateWindow != null && categoryUpdateWindow!!.isVisible)
+            if (categoryUpdateWindow != null && categoryUpdateWindow!!.isVisible)
                 categoryUpdateWindow!!.dispatchEvent(WindowEvent(categoryUpdateWindow, WindowEvent.WINDOW_CLOSING))
 
-            categoryUpdateWindow = CategoryUpdateOverviewWindow("Updates", CategoryUpdateOverviewTableModel(categoryUpdateList))
+            categoryUpdateWindow =
+                CategoryUpdateOverviewWindow("Updates", CategoryUpdateOverviewTableModel(categoryUpdateList))
         }, {
             categoryUpdateController.showWindow(categoryUpdateList)
         })
@@ -91,8 +92,8 @@ class CategoryExportController(private val base: BaseController, private val vie
             )
 
             categoryUpdateList = parseCSVToCategoryUpdateList(csvParser)
-        } catch (_: FileNotFoundException) { }
-        catch (iae: IllegalArgumentException) {
+        } catch (_: FileNotFoundException) {
+        } catch (iae: IllegalArgumentException) {
             JOptionPane.showMessageDialog(view, "Unable to read csv file.")
         }
     }
@@ -102,7 +103,7 @@ class CategoryExportController(private val base: BaseController, private val vie
         val catUpdateList = mutableMapOf<Int, CategoryUpdate>()
 
         for (csvRecord in csvParser) {
-            val id = csvRecord.get(CategoryUpdateHeader.ID.label).toInt()
+            val id = csvRecord.get(CategoryDetailHeader.ID.label).toInt()
             val catUpdate = catUpdateList[id] ?: CategoryUpdate(id)
 
             catUpdateList[catUpdate.id] = addCSVRecordToCategoryUpdate(catUpdate, csvRecord)
@@ -111,9 +112,11 @@ class CategoryExportController(private val base: BaseController, private val vie
         return catUpdateList.values.toList()
     }
 
-    private fun addCSVRecordToCategoryUpdate(catUpdate:CategoryUpdate, csvRecord:CSVRecord): CategoryUpdate {
-        when(csvRecord.get(CategoryUpdateHeader.TYPE.label)) {
-            CategoryAttributeType.CUSTOM_ATTRIBUTE.label -> catUpdate.customAttributes[csvRecord.get(CategoryUpdateHeader.CODE.label)] = csvRecord.get(CategoryUpdateHeader.VALUE.label)
+    private fun addCSVRecordToCategoryUpdate(catUpdate: CategoryUpdate, csvRecord: CSVRecord): CategoryUpdate {
+        when (csvRecord.get(CategoryDetailHeader.TYPE.label)) {
+            CategoryAttributeType.CUSTOM_ATTRIBUTES.label -> catUpdate.customAttributes[csvRecord.get(
+                CategoryDetailHeader.CODE.label
+            )] = csvRecord.get(CategoryDetailHeader.VALUE.label)
         }
 
         return catUpdate
@@ -148,8 +151,8 @@ class CategoryExportController(private val base: BaseController, private val vie
 
     private fun parseCategoryJsonObject(json: JSONObject): CategoryBasics {
         val cat = CategoryBasics(
-            json.getInt("id"),
-            json.getInt("parent_id"),
+            json.getInt(CategoryAttribute.ID.label),
+            json.getInt(CategoryAttribute.PARENT_ID.label),
             json.getString("name"),
             json.getBoolean("is_active", false),
             json.getInt("position"),
@@ -197,9 +200,9 @@ class CategoryExportController(private val base: BaseController, private val vie
 
     private fun parseCategoryDetailJsonObject(jsonObject: JSONObject): CategoryDetail {
         val basic = parseCategoryJsonObject(jsonObject)
-        val detail = CategoryDetail(basic, jsonObject.getBoolean("include_in_menu", false))
+        val detail = CategoryDetail(basic, jsonObject.getBoolean(CategoryAttribute.INCLUDE_IN_MENU.label, false))
 
-        val customAttributeArr = jsonObject.getJSONArray("custom_attributes")
+        val customAttributeArr = jsonObject.getJSONArray(CategoryAttributeType.CUSTOM_ATTRIBUTES.label)
         customAttributeArr.forEach {
             detail.customAttributes[(it as JSONObject).getString("attribute_code")] = it.getString("value")
         }
@@ -226,7 +229,6 @@ class CategoryExportController(private val base: BaseController, private val vie
         val bld = StringBuilder()
         val csvPrinter = CSVPrinter(
             bld,
-//            CSVFormat.EXCEL.withHeader(*(CategoryDetail.csvHeader().toTypedArray())).withDelimiter(config.columnSeparator)
             CSVFormat.EXCEL.withDelimiter(config.columnSeparator)
         )
 

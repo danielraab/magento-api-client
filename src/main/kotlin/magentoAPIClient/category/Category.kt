@@ -29,7 +29,7 @@ data class CategoryDetail(
 }
 
 
-fun CategoryBasics.toCsv(): List<Any> {
+fun CategoryBasics.toCsvList(): List<Any> {
     return listOf(
         this.id,
         this.parentId,
@@ -57,59 +57,73 @@ fun CategoryBasics.recursiveCsvTree(csvPrinter: CSVPrinter) {
 
 
 fun CategoryDetail.toCsvList(): List<List<Any>> {
-    val preAttrInfo = this.basic.toCsv() + listOf(this.includeInMenu)
+    val preAttrInfo = this.basic.toCsvList() + listOf(this.includeInMenu)
 
     val catDetailsList = mutableListOf<List<Any>>()
 
-    if (this.customAttributes.isEmpty()) {
-        catDetailsList.add(preAttrInfo + listOf("", ""))
-    } else {
+    catDetailsList.add(
+        listOf(this.basic.id,CategoryAttributeType.BASIC.label,CategoryAttribute.PARENT_ID.label,this.basic.parentId)
+    )
+    catDetailsList.add(
+        listOf(this.basic.id,CategoryAttributeType.BASIC.label,CategoryAttribute.NAME.label,this.basic.name)
+    )
+    catDetailsList.add(
+        listOf(this.basic.id,CategoryAttributeType.BASIC.label,CategoryAttribute.IS_ACTIVE.label,this.basic.isActive)
+    )
+    catDetailsList.add(
+        listOf(this.basic.id,CategoryAttributeType.BASIC.label,CategoryAttribute.POSITION.label,this.basic.position)
+    )
+    catDetailsList.add(
+        listOf(this.basic.id,CategoryAttributeType.BASIC.label,CategoryAttribute.LEVEL.label,this.basic.level)
+    )
+
         catDetailsList.addAll(this.customAttributes.map {
-            preAttrInfo + listOf(it.key, it.value)
+            listOf(
+                this.basic.id,
+                CategoryAttributeType.CUSTOM_ATTRIBUTES.label,
+                it.key,
+                it.value
+            )
         })
-    }
 
     return catDetailsList
 }
 
 
-fun CategoryBasics.Companion.csvHeader(): List<String> {
+fun CategoryDetail.Companion.csvHeader(): List<String> {
     return listOf(
-        "cat.id",
-        "cat.parentId",
-        "cat.name",
-        "cat.isActive",
-        "cat.position",
-        "cat.level",
-        "cat.productCnt",
-        "cat.childrenCnt"
+        CategoryDetailHeader.ID.label,
+        CategoryDetailHeader.TYPE.label,
+        CategoryDetailHeader.CODE.label,
+        CategoryDetailHeader.VALUE.label
     )
 }
 
-fun CategoryDetail.Companion.csvHeader(): List<String> {
-    return CategoryBasics.csvHeader() +
-            listOf(
-                "cat.includeInMenu",
-                "cat.customAttrCode",
-                "cat.customAttrValue"
-            )
+enum class CategoryAttribute(val label: String) {
+    ID("id"),
+    PARENT_ID("parent_id"),
+    NAME("name"),
+    IS_ACTIVE("is_active"),
+    POSITION("position"),
+    LEVEL("level"),
+    PRODUCT_COUNT("product_count"),
+    INCLUDE_IN_MENU("include_in_menu"),
 }
 
-
-enum class CategoryUpdateHeader(val label: String) {
+enum class CategoryDetailHeader(val label: String) {
     ID("cat.id"), TYPE("cat.attributeType"), CODE("cat.attrCode"), VALUE("cat.attrValue");
 }
 
-enum class CategoryAttributeType(val label: String) { CUSTOM_ATTRIBUTE("custom_attribute") }
+enum class CategoryAttributeType(val label: String) { BASIC("basic"), CUSTOM_ATTRIBUTES("custom_attributes") }
 
 data class CategoryUpdate(val id: Int, val customAttributes: MutableMap<String, String> = mutableMapOf()) {
 
-    fun toList() = customAttributes.map { listOf(id, CategoryAttributeType.CUSTOM_ATTRIBUTE, it.key, it.value) }
+    fun toList() = customAttributes.map { listOf(id, CategoryAttributeType.CUSTOM_ATTRIBUTES, it.key, it.value) }
 
     fun toUpdateJSONObject(): JSONObject {
-        val obj = JSONObject();
+        val obj = JSONObject()
 
-        obj.put("custom_attributes", customAttributes.map { attr ->
+        obj.put(CategoryAttributeType.CUSTOM_ATTRIBUTES.label, customAttributes.map { attr ->
             JSONObject().also {
                 it.put("attribute_code", attr.key)
                 it.put("value", attr.value)

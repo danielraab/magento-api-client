@@ -1,9 +1,7 @@
 package magentoAPIClient.category.overview
 
+import magentoAPIClient.category.CategoryDetailHeader
 import magentoAPIClient.category.CategoryUpdate
-import magentoAPIClient.category.CategoryUpdateHeader
-import magentoAPIClient.product.FullProduct
-import javax.swing.event.TableModelEvent
 import javax.swing.event.TableModelListener
 import javax.swing.table.TableModel
 
@@ -17,11 +15,11 @@ class CategoryUpdateOverviewTableModel(categoryList: List<CategoryUpdate>) : Tab
     }
 
     override fun getColumnCount(): Int {
-        return CategoryUpdateHeader.values().size
+        return CategoryDetailHeader.values().size
     }
 
     override fun getColumnName(columnIndex: Int): String {
-        return CategoryUpdateHeader.values()[columnIndex].label
+        return CategoryDetailHeader.values()[columnIndex].label
     }
 
     override fun getColumnClass(columnIndex: Int): Class<*> {
