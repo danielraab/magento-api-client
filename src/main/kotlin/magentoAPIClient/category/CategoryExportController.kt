@@ -130,7 +130,7 @@ class CategoryExportController(private val base: BaseController, private val vie
         var result: HttpResponse<String>? = null
         try {
             result =
-                HttpHelper(CategoryRequestFactory.categoryTree(config.baseUrl, config.authentication)).sendRequest()
+                HttpHelper(CategoryRequestFactory.categoryTree(config.baseUrl, config.authentication, config.storeView)).sendRequest()
 
             val jsonRoot = result.body().toJSONObject()
 
@@ -175,7 +175,8 @@ class CategoryExportController(private val base: BaseController, private val vie
             httpResponse = HttpHelper(
                 CategoryRequestFactory.categoryDetailsList(
                     config.baseUrl,
-                    config.authentication
+                    config.authentication,
+                    config.storeView
                 )
             ).sendRequest()
 

@@ -123,17 +123,17 @@ fun ProductAttributeUpdate.getValueString(): Any =
 
 class CategoryRequestFactory {
     companion object {
-        fun categoryTree(baseUrl: String, authentication: String) = RequestInfo(
+        fun categoryTree(baseUrl: String, authentication: String, storeView: String?,) = RequestInfo(
             baseUrl,
-            "/rest/V1/categories",
+            "/rest/${storeView?.let { "$it/" }}V1/categories",
             Method.GET,
             mutableMapOf(),
             mutableMapOf(Header.AUTHORIZATION to authentication)
         )
 
-        fun categoryDetailsList(baseUrl: String, authentication: String, pageSize: Int = 300) = RequestInfo(
+        fun categoryDetailsList(baseUrl: String, authentication: String, storeView: String?,pageSize: Int = 300) = RequestInfo(
             baseUrl,
-            "/rest/V1/categories/list",
+            "/rest/${storeView?.let { "$it/" }}V1/categories/list",
             Method.GET,
             mutableMapOf("searchCriteria[pageSize]" to pageSize.toString()),
             mutableMapOf(Header.AUTHORIZATION to authentication)
