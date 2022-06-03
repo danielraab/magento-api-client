@@ -130,7 +130,7 @@ fun String.toJSONObject(): JSONObject {
     if (jsonRoot is JSONObject)
         return jsonRoot
     else
-        throw IllegalArgumentException("given string is no JsonObject: $jsonRoot")
+        throw JSONException("given string is no JsonObject: $jsonRoot")
 }
 
 fun String.toJSONArray(): JSONArray {
@@ -138,7 +138,7 @@ fun String.toJSONArray(): JSONArray {
     if (jsonRoot is JSONArray)
         return jsonRoot
     else
-        throw IllegalArgumentException("given string is no JSONArray: $jsonRoot")
+        throw JSONException("given string is no JSONArray: $jsonRoot")
 }
 
 

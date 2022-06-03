@@ -17,6 +17,7 @@ import java.awt.event.WindowEvent
 import java.io.*
 import java.lang.IllegalArgumentException
 import java.net.http.HttpResponse
+import java.nio.charset.Charset
 import javax.swing.JOptionPane
 
 class CategoryExportController(private val base: BaseController, private val view: CategoryExportComponent) :
@@ -61,7 +62,7 @@ class CategoryExportController(private val base: BaseController, private val vie
 
 
         view.addCategoryUpdateBtnHandlers({
-            readCategoryUpdatesFromFile()
+            readCategoryUpdatesFromFile(config.encoding.charset)
             view.updateInfoLabels(
                 updateCategoryCnt = categoryUpdateList.size,
                 updatesCnt = categoryUpdateList.sumOf { it.customAttributes.size })
@@ -77,14 +78,14 @@ class CategoryExportController(private val base: BaseController, private val vie
         view.updateInfoLabels(0, 0, 0, 0)
     }
 
-    private fun readCategoryUpdatesFromFile() {
+    private fun readCategoryUpdatesFromFile(encoding: Charset) {
 
         try {
 
             val file = openFileDialogHandler(view) ?: throw FileNotFoundException()
 
             val csvParser = CSVParser(
-                FileReader(file),
+                FileReader(file, encoding),
                 CSVFormat.EXCEL.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim()
                     .withDelimiter(config.columnSeparator)
             )

@@ -19,6 +19,7 @@
     151;custom_attribute;meta_title;more content to test
     151;custom_attribute;meta_description;"some more"","" tests</div>"
     ```
+  * **at the moment only custom attributes are supported !!**
 
 ### Products
 
@@ -35,3 +36,18 @@
 ## look and feel
 
 TODO: add screenshots
+
+## how to use
+
+### compile code
+
+* install java 11
+* execute from source path
+  * linux: `./gradlew fatJar`
+  * windows: `./gradlew.bat fatJar` (not tested)
+* jar file will be generated in `./build/libs`
+
+### execute jar
+
+* set execute rights for `.jar` files
+* execute file: `java -jar {jar_file}`
