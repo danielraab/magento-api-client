@@ -15,9 +15,9 @@
   * necessary csv format:
     ```csv
     cat.id;cat.attributeType;cat.attrCode;cat.attrValue
-    151;custom_attribute;description;"Testtest"
-    151;custom_attribute;meta_title;more content to test
-    151;custom_attribute;meta_description;"some more"","" tests</div>"
+    151;custom_attributes;description;"Testtest"
+    151;custom_attributes;meta_title;more content to test
+    151;custom_attributes;meta_description;"some more"","" tests</div>"
     ```
   * **at the moment only custom attributes are supported !!**
 

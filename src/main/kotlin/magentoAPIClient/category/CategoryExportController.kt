@@ -62,7 +62,8 @@ class CategoryExportController(private val base: BaseController, private val vie
 
 
         view.addCategoryUpdateBtnHandlers({
-            readCategoryUpdatesFromFile(config.encoding.charset)
+            this.config = base.updateConfigFromGui(this.config)
+            readCategoryUpdatesFromFile(this.config.encoding.charset)
             view.updateInfoLabels(
                 updateCategoryCnt = categoryUpdateList.size,
                 updatesCnt = categoryUpdateList.sumOf { it.customAttributes.size })
