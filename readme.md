@@ -35,7 +35,9 @@
 
 ## look and feel
 
-TODO: add screenshots
+![categories](./docs/img/categories1.PNG)
+![products](./docs/img/products.PNG)
+![attributes](./docs/img/attributes.PNG)
 
 ## how to use
 
