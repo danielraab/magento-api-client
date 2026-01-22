@@ -1,5 +1,7 @@
 # Magento API Client
 
+> The tool will not be developed further.
+
 #### Java 11 necessary
 
 ## Short description
